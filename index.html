@@ -1,0 +1,2342 @@
+<!doctype html>
+<html lang="fi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Braveson – Tietoturvapelit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                green: "#98c355",
+                beige: "#ebe8de",
+                brown: "#6c4d35",
+                blue: "#233e98",
+                purple: "#503f99",
+                red: "#d31e3f",
+              },
+            },
+            fontFamily: {
+              outfit: ["Outfit", "sans-serif"],
+              karla: ["Karla", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Karla:ital,wght@0,300;0,400;0,500;0,800;1,400&display=swap");
+
+      :root {
+        /* Braveson brand palette */
+        --bg: #161c13;
+        --surface: #1d261a;
+        --surface2: #232e1f;
+        --surface3: #2b3826;
+        --border: #334428;
+        --border-hi: #4a6a30;
+        --green: #98c355;
+        --green-dim: rgba(152, 195, 85, 0.1);
+        --green-mid: rgba(152, 195, 85, 0.22);
+        --beige: #ebe8de;
+        --beige-dim: rgba(235, 232, 222, 0.06);
+        --brown: #6c4d35;
+        --blue: #6b8fe8;
+        --blue-dim: rgba(107, 143, 232, 0.18);
+        --purple: #9b8de8;
+        --purple-dim: rgba(155, 141, 232, 0.18);
+        --red: #f04060;
+        --red-dim: rgba(240, 64, 96, 0.13);
+        --text: #edf2e8;
+        --text-soft: #ccdbb8;
+        --muted: #9ab878;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Karla", sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 70% 50% at 10% 0%,
+            rgba(152, 195, 85, 0.09) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 50% 60% at 90% 100%,
+            rgba(152, 195, 85, 0.05) 0%,
+            transparent 55%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .app {
+        position: relative;
+        z-index: 1;
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 36px 24px 60px;
+      }
+
+      .screen {
+        display: none;
+      }
+      .screen.active {
+        display: block;
+      }
+
+      /* ── LOGO ── */
+      .logo {
+        text-align: center;
+        margin-bottom: 48px;
+        padding-bottom: 36px;
+        border-bottom: 1px solid var(--border);
+      }
+      .logo-icon {
+        font-size: 2.8rem;
+        display: block;
+        margin-bottom: 12px;
+      }
+      .logo h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        letter-spacing: 6px;
+        background: linear-gradient(
+          120deg,
+          #c8e87a 0%,
+          var(--green) 50%,
+          var(--beige) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.1;
+      }
+      .logo p {
+        color: var(--muted);
+        font-size: 0.78rem;
+        margin-top: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+
+      /* ── MENU GRID ── */
+      .game-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 40px;
+      }
+      @media (max-width: 600px) {
+        .game-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .game-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 28px 24px 22px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease,
+          border-color 0.25s ease,
+          background 0.25s ease;
+        text-align: left;
+      }
+      .game-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--card-color, var(--green));
+        border-radius: 8px 8px 0 0;
+        opacity: 0.7;
+        transition: opacity 0.25s;
+      }
+      .game-card:hover {
+        border-color: var(--card-color, var(--green));
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        background: var(--surface2);
+      }
+      .game-card:hover::after {
+        opacity: 1;
+      }
+      .game-card .icon {
+        font-size: 2.2rem;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .game-card h2 {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--card-color, var(--green));
+        margin-bottom: 10px;
+        text-transform: uppercase;
+      }
+      .game-card p {
+        font-size: 0.85rem;
+        color: var(--text-soft);
+        line-height: 1.65;
+      }
+      .game-card .difficulty {
+        margin-top: 16px;
+        font-size: 0.68rem;
+        letter-spacing: 2px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .game-card .best-score {
+        margin-top: 8px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        color: var(--green);
+        opacity: 0.9;
+      }
+
+      .gc1 {
+        --card-color: var(--red);
+      }
+      .gc2 {
+        --card-color: var(--blue);
+      }
+      .gc3 {
+        --card-color: var(--green);
+      }
+      .gc4 {
+        --card-color: var(--purple);
+      }
+
+      /* ── GAME HEADER ── */
+      .game-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .back-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--muted);
+        padding: 8px 16px;
+        cursor: pointer;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        letter-spacing: 2px;
+        transition: all 0.2s;
+      }
+      .back-btn:hover {
+        border-color: var(--green);
+        color: var(--green);
+        background: var(--green-dim);
+      }
+      .game-title {
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 1px;
+      }
+      .score-badge {
+        margin-left: auto;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.78rem;
+        color: var(--green);
+        background: var(--green-dim);
+        border: 1px solid rgba(152, 195, 85, 0.3);
+        border-radius: 4px;
+        padding: 6px 16px;
+      }
+
+      /* ── PROGRESS ── */
+      .progress-bar {
+        height: 4px;
+        background: var(--surface3);
+        border-radius: 2px;
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--green), var(--beige));
+        border-radius: 2px;
+        transition: width 0.5s ease;
+      }
+
+      /* ── TABS ── */
+      .tab-bar {
+        display: flex;
+        margin-bottom: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        padding: 4px;
+        gap: 4px;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 9px 12px;
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+        color: var(--muted);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .tab-btn.active {
+        background: var(--surface3);
+        color: var(--green);
+      }
+
+      /* ── SCOREBOARD ── */
+      .scoreboard {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .sb-header {
+        background: var(--surface2);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .sb-header h3 {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.75rem;
+        color: var(--green);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .sb-row {
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        align-items: center;
+        padding: 13px 20px;
+        border-bottom: 1px solid var(--border);
+        gap: 12px;
+        transition: background 0.15s;
+      }
+      .sb-row:last-child {
+        border-bottom: none;
+      }
+      .sb-row:hover {
+        background: var(--surface2);
+      }
+      .sb-rank {
+        font-family: "Outfit", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+      .sb-rank.gold {
+        color: #f5c842;
+      }
+      .sb-rank.silver {
+        color: #b8c0cc;
+      }
+      .sb-rank.bronze {
+        color: #c8865a;
+      }
+      .sb-rank.other {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+      .sb-name {
+        font-size: 0.88rem;
+        color: var(--text);
+        font-weight: 500;
+      }
+      .sb-time {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .sb-score {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        color: var(--green);
+        font-weight: 700;
+      }
+      .sb-empty {
+        padding: 48px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      /* ── NAME INPUT ── */
+      .name-input-wrap {
+        margin-bottom: 20px;
+      }
+      .name-input {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-size: 1rem;
+        padding: 14px 18px;
+        letter-spacing: 2px;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .name-input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px var(--green-dim);
+      }
+      .name-label {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        color: var(--muted);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      /* ── SHARED GAME ELEMENTS ── */
+      .choice-btn {
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text-soft);
+        cursor: pointer;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .choice-btn:hover {
+        border-color: var(--green);
+        color: var(--green);
+        background: var(--green-dim);
+      }
+      .choice-btn.correct {
+        border-color: var(--green);
+        background: var(--green-dim);
+        color: var(--green);
+      }
+      .choice-btn.wrong {
+        border-color: var(--red);
+        background: var(--red-dim);
+        color: var(--red);
+      }
+
+      .feedback-box {
+        padding: 18px 20px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--green);
+        border-radius: 0 6px 6px 0;
+        margin-bottom: 20px;
+        display: none;
+      }
+      .feedback-box.show {
+        display: block;
+      }
+      .feedback-box.wrong {
+        border-left-color: var(--red);
+      }
+      .feedback-box h3 {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.75rem;
+        margin-bottom: 8px;
+        color: var(--green);
+        letter-spacing: 1px;
+      }
+      .feedback-box.wrong h3 {
+        color: var(--red);
+      }
+      .feedback-box p {
+        font-size: 0.85rem;
+        color: var(--text-soft);
+        line-height: 1.7;
+      }
+      .clues-list {
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: var(--text-soft);
+      }
+      .clues-list li {
+        padding: 4px 0 4px 18px;
+        position: relative;
+        list-style: none;
+      }
+      .clues-list li::before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: var(--green);
+      }
+
+      .next-btn {
+        width: 100%;
+        padding: 15px;
+        background: var(--green);
+        border: none;
+        border-radius: 6px;
+        color: #1a1a1a;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.78rem;
+        letter-spacing: 3px;
+        font-weight: 800;
+        cursor: pointer;
+        display: none;
+        text-transform: uppercase;
+        transition:
+          opacity 0.2s,
+          transform 0.15s;
+      }
+      .next-btn.show {
+        display: block;
+      }
+      .next-btn:hover {
+        opacity: 0.88;
+        transform: translateY(-1px);
+      }
+
+      /* ── EMAIL ── */
+      .email-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      }
+      .email-header {
+        background: var(--surface2);
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .email-field {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .email-field span {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .email-subject {
+        font-size: 0.98rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 10px;
+      }
+      .email-body {
+        padding: 20px;
+        font-size: 0.87rem;
+        line-height: 1.85;
+        color: var(--text-soft);
+        white-space: pre-line;
+      }
+      .phishing-choices {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      /* ── PASSWORD ── */
+      .pw-input {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-size: 1.1rem;
+        padding: 18px 22px;
+        letter-spacing: 3px;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        margin-bottom: 16px;
+      }
+      .pw-input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px var(--green-dim);
+      }
+      .pw-strength-bar {
+        height: 6px;
+        background: var(--surface3);
+        border-radius: 3px;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+      .pw-strength-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition:
+          width 0.4s,
+          background 0.4s;
+      }
+      .pw-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .pw-metric {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.8rem;
+        transition: border-color 0.3s;
+      }
+      .pw-metric .metric-icon {
+        font-size: 1.1rem;
+      }
+      .pw-metric .metric-label {
+        color: var(--muted);
+        font-size: 0.7rem;
+        display: block;
+      }
+      .pw-metric .metric-value {
+        color: var(--text);
+        font-weight: 600;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.75rem;
+      }
+      .pw-metric.ok {
+        border-color: rgba(152, 195, 85, 0.5);
+        background: var(--green-dim);
+      }
+      .pw-metric.warn {
+        border-color: rgba(235, 232, 222, 0.25);
+      }
+      .pw-metric.bad {
+        border-color: rgba(211, 30, 63, 0.4);
+        background: var(--red-dim);
+      }
+      .crack-time {
+        text-align: center;
+        padding: 32px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .crack-time .label {
+        font-size: 0.68rem;
+        letter-spacing: 3px;
+        color: var(--muted);
+        margin-bottom: 12px;
+        font-family: "Outfit", sans-serif;
+        text-transform: uppercase;
+      }
+      .crack-time .time {
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(1.4rem, 4vw, 2.4rem);
+        font-weight: 900;
+        color: var(--green);
+      }
+      .pw-tips {
+        background: var(--surface2);
+        border-left: 3px solid var(--green);
+        border-radius: 0 6px 6px 0;
+        padding: 16px 20px;
+      }
+      .pw-tips h4 {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.72rem;
+        color: var(--green);
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .pw-tips ul {
+        list-style: none;
+        font-size: 0.82rem;
+        color: var(--text-soft);
+        line-height: 2.1;
+      }
+      .pw-tips li::before {
+        content: "→ ";
+        color: var(--green);
+      }
+
+      /* ── TRIVIA ── */
+      .trivia-question {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 26px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+      .trivia-question .q-number {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        color: var(--green);
+        letter-spacing: 3px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+      }
+      .trivia-question h3 {
+        font-size: 1.02rem;
+        font-weight: 500;
+        line-height: 1.6;
+        color: var(--text);
+      }
+      .trivia-options {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .trivia-opt {
+        padding: 14px 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-soft);
+        cursor: pointer;
+        font-size: 0.87rem;
+        text-align: left;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .trivia-opt:hover {
+        border-color: var(--green);
+        color: var(--text);
+        background: var(--green-dim);
+      }
+      .trivia-opt.correct {
+        border-color: var(--green);
+        background: var(--green-dim);
+        color: var(--green);
+      }
+      .trivia-opt.wrong {
+        border-color: var(--red);
+        background: var(--red-dim);
+        color: var(--red);
+      }
+      .trivia-opt .opt-letter {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.68rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid currentColor;
+        border-radius: 3px;
+        flex-shrink: 0;
+        opacity: 0.8;
+      }
+
+      /* ── WORKDAY GAME ── */
+      .wday-scenario {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--purple);
+        border-radius: 0 8px 8px 0;
+        padding: 22px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+      .wday-scenario .scenario-type {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.65rem;
+        letter-spacing: 3px;
+        color: var(--purple);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+      }
+      .wday-scenario h3 {
+        font-size: 1rem;
+        line-height: 1.55;
+        color: var(--text);
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .wday-scenario .details {
+        font-size: 0.84rem;
+        color: var(--text-soft);
+        line-height: 1.7;
+      }
+      .wday-options {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .wday-opt {
+        padding: 14px 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-soft);
+        cursor: pointer;
+        font-size: 0.86rem;
+        text-align: left;
+        transition: all 0.2s;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .wday-opt:hover {
+        border-color: var(--purple);
+        color: var(--text);
+        background: var(--purple-dim);
+      }
+      .wday-opt.correct {
+        border-color: var(--green);
+        background: var(--green-dim);
+        color: var(--green);
+      }
+      .wday-opt.wrong {
+        border-color: var(--red);
+        background: var(--red-dim);
+        color: var(--red);
+      }
+      .wday-opt .opt-key {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.65rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid currentColor;
+        border-radius: 3px;
+        flex-shrink: 0;
+        margin-top: 1px;
+        opacity: 0.75;
+      }
+      .wday-threat-meter {
+        margin-bottom: 22px;
+      }
+      .wday-threat-label {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.67rem;
+        color: var(--muted);
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        text-transform: uppercase;
+      }
+      .wday-threat-bar {
+        height: 8px;
+        background: var(--surface3);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .wday-threat-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition:
+          width 0.6s ease,
+          background 0.6s ease;
+        background: var(--green);
+      }
+
+      /* ── RESULT ── */
+      .result-screen {
+        text-align: center;
+        padding: 48px 16px 32px;
+      }
+      .result-score {
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(3rem, 9vw, 5.5rem);
+        font-weight: 900;
+        background: linear-gradient(
+          120deg,
+          #c8e87a 0%,
+          var(--green) 50%,
+          var(--beige) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        line-height: 1;
+      }
+      .result-label {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.72rem;
+        letter-spacing: 4px;
+        color: var(--muted);
+        margin-bottom: 24px;
+        text-transform: uppercase;
+      }
+      .result-message {
+        font-size: 1.05rem;
+        color: var(--text-soft);
+        margin-bottom: 32px;
+        line-height: 1.7;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .result-badges {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 36px;
+      }
+      .badge {
+        padding: 7px 18px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.62rem;
+        letter-spacing: 2px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+      .badge.earned {
+        border-color: var(--green);
+        color: var(--green);
+        background: var(--green-dim);
+      }
+      .result-btns {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      .play-again-btn {
+        padding: 14px 30px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-soft);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.72rem;
+        letter-spacing: 3px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+      }
+      .play-again-btn:hover {
+        border-color: var(--green);
+        color: var(--green);
+        background: var(--green-dim);
+      }
+      .play-again-btn.primary {
+        background: var(--green);
+        color: #1a1a1a;
+        border-color: transparent;
+        font-weight: 800;
+      }
+      .play-again-btn.primary:hover {
+        opacity: 0.88;
+        background: var(--green);
+      }
+
+      /* ── SAVE NAME ── */
+      .save-score-box {
+        background: var(--surface);
+        border: 1px solid rgba(152, 195, 85, 0.3);
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 24px;
+        text-align: left;
+        box-shadow: 0 0 0 1px var(--green-dim) inset;
+      }
+      .save-score-box h3 {
+        font-family: "Outfit", sans-serif;
+        font-size: 0.78rem;
+        color: var(--green);
+        letter-spacing: 2px;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+      }
+      .save-row {
+        display: flex;
+        gap: 10px;
+      }
+      .save-input {
+        flex: 1;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.9rem;
+        padding: 12px 16px;
+        letter-spacing: 2px;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .save-input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px var(--green-dim);
+      }
+      .save-btn {
+        padding: 12px 22px;
+        background: var(--green);
+        border: none;
+        border-radius: 6px;
+        color: #1a1a1a;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        font-weight: 800;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: opacity 0.2s;
+      }
+      .save-btn:hover {
+        opacity: 0.88;
+      }
+
+      /* ── FOOTER ── */
+      .menu-footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        text-transform: uppercase;
+      }
+
+      /* ── ANIM ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .anim {
+        animation: fadeUp 0.35s ease both;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- MENU -->
+      <div id="screen-menu" class="screen active">
+        <div class="logo">
+          <img src="logo-vaaka-väri-valk.svg" height="" />
+          <p>Tietoturvapelit &nbsp;·&nbsp; Jyväskylä 2025</p>
+        </div>
+        <div class="game-grid">
+          <div class="game-card gc1" onclick="startGame('phishing')">
+            <h2>Phishing-tunnistus</h2>
+            <p>
+              Onko viesti aito vai huijaus? Tunnista petosviestit ennen kuin on
+              liian myöhäistä.
+            </p>
+            <div class="difficulty">6 kierrosta</div>
+            <div class="best-score" id="best-phishing">Ei tuloksia vielä</div>
+          </div>
+          <div class="game-card gc2" onclick="startGame('password')">
+            <h2>Salasana-analysoija</h2>
+            <p>Kuinka turvallinen salasanasi on? Live-analyysi reaaliajassa.</p>
+            <div class="difficulty">Interaktiivinen</div>
+            <div class="best-score" id="best-password">Ei tuloksia vielä</div>
+          </div>
+          <div class="game-card gc3" onclick="startGame('trivia')">
+            <h2>Tietoturvatrivia</h2>
+            <p>10 kysymystä digiturvallisuudesta – kuinka monta osaat?</p>
+            <div class="difficulty">10 kysymystä</div>
+            <div class="best-score" id="best-trivia">Ei tuloksia vielä</div>
+          </div>
+          <div class="game-card gc4" onclick="startGame('workday')">
+            <h2>Asiantuntijan päivä</h2>
+            <p>
+              Simuloi tietoturva-asiantuntijan päivää – tee oikeat päätökset
+              uhkien edessä.
+            </p>
+            <div class="difficulty">8 skenaariota</div>
+            <div class="best-score" id="best-workday">Ei tuloksia vielä</div>
+          </div>
+          <div class="game-card gc3" onclick="startGame('trivia2')" style="--card-color: var(--blue)">
+            <h2>Tietoturvatrivia 2</h2>
+            <p>Tekniset haasteet: SQL-injektiot, kryptografia, hyökkäystekniikat – testaa syvempi osaamisesi.</p>
+            <div class="difficulty">10 kysymystä · Haastava</div>
+            <div class="best-score" id="best-trivia2">Ei tuloksia vielä</div>
+          </div>
+        </div>
+        <div
+          class="text-center text-xs tracking-widest uppercase pt-6 border-t border-[#334428]"
+          style="color: var(--muted)"
+        >
+          Be Brave. Be Secure.
+        </div>
+        <img src="logo-vaaka-väri-valk.svg" />
+      </div>
+
+      <!-- PHISHING -->
+      <div id="screen-phishing" class="screen">
+        <div class="game-header">
+          <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
+          <span class="game-title">PHISHING-TUNNISTUS</span>
+          <span class="score-badge" id="phishing-score">0 / 6</span>
+        </div>
+        <div class="tab-bar">
+          <button
+            class="tab-btn active"
+            onclick="switchTab('phishing', 'game')"
+          >
+            PELI
+          </button>
+          <button class="tab-btn" onclick="switchTab('phishing', 'board')">
+            TULOKSET
+          </button>
+        </div>
+        <div id="phishing-game-tab">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="phishing-progress"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div id="phishing-content"></div>
+        </div>
+        <div id="phishing-board-tab" style="display: none">
+          <div id="phishing-scoreboard"></div>
+        </div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div id="screen-password" class="screen">
+        <div class="game-header">
+          <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
+          <span class="game-title">SALASANA-ANALYSOIJA</span>
+        </div>
+        <div class="tab-bar">
+          <button
+            class="tab-btn active"
+            onclick="switchTab('password', 'game')"
+          >
+            PELI
+          </button>
+          <button class="tab-btn" onclick="switchTab('password', 'board')">
+            TULOKSET
+          </button>
+        </div>
+        <div id="password-game-tab"><div id="password-content"></div></div>
+        <div id="password-board-tab" style="display: none">
+          <div id="password-scoreboard"></div>
+        </div>
+      </div>
+
+      <!-- TRIVIA -->
+      <div id="screen-trivia" class="screen">
+        <div class="game-header">
+          <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
+          <span class="game-title">TIETOTURVATRIVIA</span>
+          <span class="score-badge" id="trivia-score">0 / 10</span>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('trivia', 'game')">
+            PELI
+          </button>
+          <button class="tab-btn" onclick="switchTab('trivia', 'board')">
+            TULOKSET
+          </button>
+        </div>
+        <div id="trivia-game-tab">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="trivia-progress"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div id="trivia-content"></div>
+        </div>
+        <div id="trivia-board-tab" style="display: none">
+          <div id="trivia-scoreboard"></div>
+        </div>
+      </div>
+
+      <!-- TRIVIA 2 -->
+      <div id="screen-trivia2" class="screen">
+        <div class="game-header">
+          <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
+          <span class="game-title">TIETOTURVATRIVIA 2</span>
+          <span class="score-badge" id="trivia2-score">0 / 10</span>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('trivia2', 'game')">
+            PELI
+          </button>
+          <button class="tab-btn" onclick="switchTab('trivia2', 'board')">
+            TULOKSET
+          </button>
+        </div>
+        <div id="trivia2-game-tab">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="trivia2-progress"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div id="trivia2-content"></div>
+        </div>
+        <div id="trivia2-board-tab" style="display: none">
+          <div id="trivia2-scoreboard"></div>
+        </div>
+      </div>
+
+      <!-- WORKDAY -->
+      <div id="screen-workday" class="screen">
+        <div class="game-header">
+          <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
+          <span class="game-title">ASIANTUNTIJAN PÄIVÄ</span>
+          <span class="score-badge" id="workday-score">Uhkataso: 0%</span>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('workday', 'game')">
+            PELI
+          </button>
+          <button class="tab-btn" onclick="switchTab('workday', 'board')">
+            TULOKSET
+          </button>
+        </div>
+        <div id="workday-game-tab">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="workday-progress"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div id="workday-content"></div>
+        </div>
+        <div id="workday-board-tab" style="display: none">
+          <div id="workday-scoreboard"></div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="screen-result" class="screen">
+        <div id="result-content"></div>
+      </div>
+    </div>
+    <!-- .app -->
+
+    <script>
+      // ===================== SCORE STORAGE =====================
+      function getScores(game) {
+        try {
+          return JSON.parse(localStorage.getItem("cg_" + game) || "[]");
+        } catch (e) {
+          return [];
+        }
+      }
+      function saveScore(game, name, score, extra) {
+        const scores = getScores(game);
+        scores.push({
+          name: name.trim() || "Anonyymi",
+          score,
+          extra,
+          date: new Date().toLocaleDateString("fi-FI"),
+        });
+        scores.sort((a, b) => b.score - a.score);
+        localStorage.setItem("cg_" + game, JSON.stringify(scores.slice(0, 20)));
+        updateMenuBests();
+      }
+      function updateMenuBests() {
+        ["phishing", "trivia", "trivia2", "workday", "password"].forEach((g) => {
+          const s = getScores(g);
+          const el = document.getElementById("best-" + g);
+          if (!el) return;
+          if (s.length === 0) {
+            el.textContent = "Ei tuloksia vielä";
+            return;
+          }
+          const top = s[0];
+          if (g === "password") el.textContent = top.name + " – " + top.extra;
+          else if (g === "workday")
+            el.textContent = top.name + " – " + top.extra + "% selviytyi";
+          else
+            el.textContent =
+              top.name + " – " + top.score + "/" + (g === "phishing" ? 6 : 10);
+          if (g === "trivia2")
+            el.textContent = top.name + " – " + top.score + "/10";
+        });
+      }
+      function renderScoreboard(game, containerId) {
+        const scores = getScores(game);
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        const rankLabels = ["1.", "2.", "3."];
+        const rankClass = ["gold", "silver", "bronze"];
+        if (scores.length === 0) {
+          el.innerHTML =
+            '<div class="scoreboard"><div class="sb-empty">Ei tuloksia vielä.<br>Ole ensimmäinen!</div></div>';
+          return;
+        }
+        let rows = scores
+          .map((s, i) => {
+            const rank =
+              i < 3
+                ? `<span class="sb-rank ${rankClass[i]}">${rankLabels[i]}</span>`
+                : `<span class="sb-rank other">#${i + 1}</span>`;
+            const scoreStr =
+              game === "password"
+                ? s.extra
+                : game === "workday"
+                  ? s.extra + "% selviytyi"
+                  : s.score + (game === "phishing" ? "/6" : "/10");
+            return `<div class="sb-row">${rank}<div><div class="sb-name">${s.name}</div><div class="sb-time">${s.date}</div></div><span class="sb-score">${scoreStr}</span></div>`;
+          })
+          .join("");
+        el.innerHTML = `<div class="scoreboard"><div class="sb-header"><h3>PARHAIDEN LISTA</h3></div>${rows}</div>`;
+      }
+
+      // ===================== NAV =====================
+      let currentGame = null;
+      function showScreen(id) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("screen-" + id).classList.add("active");
+      }
+      function goMenu() {
+        showScreen("menu");
+        updateMenuBests();
+        currentGame = null;
+      }
+      function switchTab(game, tab) {
+        const gamePart = document.getElementById(game + "-game-tab");
+        const boardPart = document.getElementById(game + "-board-tab");
+        const btns = document.querySelectorAll(`#screen-${game} .tab-btn`);
+        if (tab === "game") {
+          gamePart.style.display = "";
+          boardPart.style.display = "none";
+          btns[0].classList.add("active");
+          btns[1].classList.remove("active");
+        } else {
+          gamePart.style.display = "none";
+          boardPart.style.display = "";
+          btns[1].classList.add("active");
+          btns[0].classList.remove("active");
+          renderScoreboard(game, game + "-scoreboard");
+        }
+      }
+      function startGame(game) {
+        currentGame = game;
+        // reset tabs
+        const btns = document.querySelectorAll(`#screen-${game} .tab-btn`);
+        if (btns[0]) {
+          btns[0].classList.add("active");
+          btns[1].classList.remove("active");
+        }
+        const gt = document.getElementById(game + "-game-tab");
+        const bt = document.getElementById(game + "-board-tab");
+        if (gt) gt.style.display = "";
+        if (bt) bt.style.display = "none";
+
+        if (game === "trivia2") {
+          trivia2Index = 0;
+          trivia2Score = 0;
+          answered = false;
+          showScreen("trivia2");
+          renderTrivia2();
+        } else if (game === "phishing") {
+          phishingIndex = 0;
+          phishingScore = 0;
+          answered = false;
+          showScreen("phishing");
+          renderPhishing();
+        } else if (game === "password") {
+          showScreen("password");
+          renderPassword();
+        } else if (game === "trivia") {
+          triviaIndex = 0;
+          triviaScore = 0;
+          answered = false;
+          showScreen("trivia");
+          renderTrivia();
+        } else if (game === "workday") {
+          wdayIndex = 0;
+          wdayScore = 0;
+          wdayThreat = 0;
+          answered = false;
+          showScreen("workday");
+          renderWorkday();
+        }
+      }
+
+      let answered = false;
+
+      // ===================== PHISHING =====================
+      const phishingData = [
+        {
+          from: "turvallisuus@nordea-pankki-fi.com",
+          fromDisplay: "Nordea Turvallisuus",
+          to: "sinä@gmail.com",
+          subject: "Tilisi on lukittu – toimita heti!",
+          isPhishing: true,
+          body: `Hyvä asiakas,\n\nTilisi on LUKITTU epäilyttävän toiminnan vuoksi.\n\nVahvista henkilöllisyytesi VÄLITTÖMÄSTI tai tilisi suljetaan 24h kuluessa.\n\n🔗 http://nordea-verification-secure.xyz/login\n\nSyötä verkkopankkitunnuksesi vahvistamiseksi.\n\nTerveisin, Nordea Asiakaspalvelu`,
+          clues: [
+            "Domain on 'nordea-pankki-fi.com' – ei nordea.fi",
+            "Linkki menee .xyz-domainiin, ei nordea.fi",
+            "Keinotekoinen kiireellisyys on tyypillinen huijausmenetelmä",
+            "Oikeat pankit eivät pyydä tunnuksia sähköpostitse",
+          ],
+        },
+        {
+          from: "noreply@github.com",
+          fromDisplay: "GitHub",
+          to: "sinä@gmail.com",
+          subject: "Your pull request was merged",
+          isPhishing: false,
+          body: `Hi there,\n\nYour pull request #247 "Fix authentication bug" has been merged into main.\n\nRepository: your-org/project-repo\nMerged by: revieweruser\n\nView at: https://github.com/your-org/project-repo/pull/247\n\n— GitHub`,
+          clues: [
+            "Lähettäjä on github.com – virallinen domain",
+            "Ei kiireellisyyttä tai uhkailua",
+            "Linkit viittaavat oikeaan github.com-osoitteeseen",
+            "Informatiivinen viesti, ei pyydä toimenpiteitä",
+          ],
+        },
+        {
+          from: "palkinnot@microsoft-lotteri.net",
+          fromDisplay: "Microsoft Palkinnot",
+          to: "sinä@gmail.com",
+          subject: "OLET VOITTANUT 5000€ arvonnassa!",
+          isPhishing: true,
+          body: `ONNITTELUT!\n\nOlet voittanut 5.000€ Microsoft-arvonnassa!\n\nLunastaksesi palkintosi:\n1. Vastaa 48h kuluessa\n2. Lähetä kopio henkilötodistuksesta\n3. Maksa 35€ käsittelymaksu\n\nFI21 3456 7890 1234 56 (ref: WIN2025)\n\nMicrosoft Winner Team`,
+          clues: [
+            "Microsoft ei järjestä tällaisia arvontoja",
+            "Domain on 'microsoft-lotteri.net' – ei microsoft.com",
+            "'Käsittelymaksu' on klassinen huijausmerkki",
+            "Henkilötodistuksen pyytäminen on vakava varoitusmerkki",
+          ],
+        },
+        {
+          from: "noreply@spotify.com",
+          fromDisplay: "Spotify",
+          to: "sinä@gmail.com",
+          subject: "Tilauksen maksu epäonnistui",
+          isPhishing: false,
+          body: `Hei,\n\nKuukausimaksusi veloitus epäonnistui. Päivitä maksutietosi, jotta Premium-tilauksesi jatkuu.\n\nTilaus: Spotify Premium\nSeuraava veloituspäivä: 15.1.2025\n\nPäivitä: https://www.spotify.com/fi/account/subscription/\n\nJos tietosi on ajan tasalla, voit ohittaa tämän.\n\n– Spotify-tiimi`,
+          clues: [
+            "Lähettäjä on spotify.com – virallinen domain",
+            "Linkki menee spotify.com/fi/account – oikea osoite",
+            "Tarjoaa vaihtoehdon ohittaa – ei pakota toimenpiteisiin",
+            "Asiallinen sävy ilman paniikkia",
+          ],
+        },
+        {
+          from: "security@app1e.com",
+          fromDisplay: "Apple Security Team",
+          to: "sinä@gmail.com",
+          subject: "Your Apple ID was used from Russia",
+          isPhishing: true,
+          body: `Apple Security Alert\n\nYour Apple ID was used to sign in from Moscow, Russia.\nDate: Today 03:47 AM\n\nIf this was NOT you:\n🔗 http://app1e-security-verify.com/secure\n\nThis link expires in 1 hour.\n\nApple Support`,
+          clues: [
+            "Domain on 'app1e.com' (numero 1 l:n sijaan) – ei apple.com",
+            "Linkki vie 'app1e-security-verify.com' – huijaussivu",
+            "Tuntiajastin luo keinotekoista kiirettä",
+            "Oikeat Apple-viestit tulevat appleid.apple.com-kautta",
+          ],
+        },
+        {
+          from: "info@hsl.fi",
+          fromDisplay: "HSL Helsingin seudun liikenne",
+          to: "sinä@gmail.com",
+          subject: "Kausikorttitilauksesi on vahvistettu",
+          isPhishing: false,
+          body: `Hei,\n\nKausikorttitilauksesi on käsitelty.\n\nTuote: Seutulippu 30 vrk\nVoimassa: 1.6–30.6.2025\nHinta: 67,00 €\n\nLataa lippu HSL-sovelluksesta.\n\nAsiakaspalvelu: 09 4766 4000\nhsl.fi`,
+          clues: [
+            "Domain on hsl.fi – virallinen HSL-domain",
+            "Tilausvahvistus vastaa tehtyä tilausta",
+            "Ei pyydä lisätietoja tai maksuja",
+            "Oikeat yhteystiedot tarkistettavissa",
+          ],
+        },
+      ];
+      let phishingIndex = 0,
+        phishingScore = 0;
+
+      function renderPhishing() {
+        if (phishingIndex >= phishingData.length) {
+          showPhishingResult();
+          return;
+        }
+        answered = false;
+        const d = phishingData[phishingIndex];
+        document.getElementById("phishing-score").textContent =
+          phishingScore + " / " + phishingData.length;
+        document.getElementById("phishing-progress").style.width =
+          (phishingIndex / phishingData.length) * 100 + "%";
+        document.getElementById("phishing-content").innerHTML =
+          `<div class="anim">
+    <div class="email-card">
+      <div class="email-header">
+        <div class="email-field">Lähettäjä: <span>${d.fromDisplay} &lt;${d.from}&gt;</span></div>
+        <div class="email-field">Vastaanottaja: <span>${d.to}</span></div>
+        <div class="email-subject">${d.subject}</div>
+      </div>
+      <div class="email-body">${d.body}</div>
+    </div>
+    <div class="phishing-choices">
+      <button class="choice-btn" id="btn-real" onclick="answerPhishing(false)">AITO VIESTI</button>
+      <button class="choice-btn" id="btn-phish" onclick="answerPhishing(true)">PHISHING-HUIJAUS</button>
+    </div>
+    <div class="feedback-box" id="phishing-feedback"></div>
+    <button class="next-btn" id="phishing-next" onclick="nextPhishing()">${phishingIndex < phishingData.length - 1 ? "SEURAAVA →" : "TULOKSET →"}</button>
+  </div>`;
+      }
+      function answerPhishing(guess) {
+        if (answered) return;
+        answered = true;
+        const d = phishingData[phishingIndex];
+        const correct = guess === d.isPhishing;
+        if (correct) phishingScore++;
+        document.getElementById("btn-real").disabled = true;
+        document.getElementById("btn-phish").disabled = true;
+        document
+          .getElementById(d.isPhishing ? "btn-phish" : "btn-real")
+          .classList.add("correct");
+        document
+          .getElementById(d.isPhishing ? "btn-real" : "btn-phish")
+          .classList.add("wrong");
+        const fb = document.getElementById("phishing-feedback");
+        fb.className = "feedback-box show" + (correct ? "" : " wrong");
+        fb.innerHTML = `<h3>${correct ? "OIKEIN!" : "VÄÄRIN!"} ${d.isPhishing ? "Tämä oli phishing." : "Tämä oli aito viesti."}</h3>
+    <p>${d.isPhishing ? "Hyvä vaisto! Vihjeet:" : "Ei hätää! Miksi aito:"}</p>
+    <ul class="clues-list">${d.clues.map((c) => `<li>${c}</li>`).join("")}</ul>`;
+        document.getElementById("phishing-next").classList.add("show");
+      }
+      function nextPhishing() {
+        phishingIndex++;
+        renderPhishing();
+      }
+      function showPhishingResult() {
+        const pct = Math.round((phishingScore / phishingData.length) * 100);
+        const msg =
+          pct === 100
+            ? "Täydellinen! Olet phishing-asiantuntija."
+            : pct >= 80
+              ? "Erinomainen! Vaikea huijata sinua."
+              : pct >= 60
+                ? "Hyvä! Tunnistat useimmat huijaukset."
+                : "Harjoittele – huijarit kehittyvät jatkuvasti!";
+        showScreen("result");
+        document.getElementById("result-content").innerHTML =
+          `<div class="result-screen anim">
+    <div class="result-score">${phishingScore}/${phishingData.length}</div>
+    <div class="result-label">PISTETTÄ // PHISHING-TUNNISTUS</div>
+    <div class="result-message">${msg}</div>
+    <div class="save-score-box"><h3>TALLENNA TULOKSESI</h3>
+      <div class="save-row"><input class="save-input" id="sv-phishing" placeholder="NIMESI..." maxlength="20">
+      <button class="save-btn" onclick="doSave('phishing',${phishingScore},${phishingScore}+'/${phishingData.length}')">TALLENNA</button></div></div>
+    <div class="result-badges">
+      <div class="badge ${pct === 100 ? "earned" : ""}">TÄYDELLINEN</div>
+      <div class="badge ${pct >= 80 ? "earned" : ""}">PHISHING-HAUKKA</div>
+      <div class="badge ${pct >= 60 ? "earned" : ""}">TURVALLINEN</div>
+    </div>
+    <div class="result-btns">
+      <button class="play-again-btn primary" onclick="startGame('phishing')">UUDELLEEN</button>
+      <button class="play-again-btn" onclick="goMenu()">VALIKKO</button>
+    </div>
+  </div>`;
+      }
+
+      // ===================== PASSWORD =====================
+      function renderPassword() {
+        document.getElementById("password-content").innerHTML =
+          `<div class="anim">
+    <input class="pw-input" id="pw-input" type="text" placeholder="Kirjoita salasana..." oninput="analyzePW(this.value)" autocomplete="off" spellcheck="false">
+    <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-bar" style="width:0%;background:var(--red)"></div></div>
+    <div class="pw-metrics">
+      <div class="pw-metric" id="pm-length"><span class="metric-icon">📏</span><div><span class="metric-label">PITUUS</span><span class="metric-value" id="pv-length">–</span></div></div>
+      <div class="pw-metric" id="pm-upper"><span class="metric-icon">🔤</span><div><span class="metric-label">ISOT KIRJAIMET</span><span class="metric-value" id="pv-upper">–</span></div></div>
+      <div class="pw-metric" id="pm-numbers"><span class="metric-icon">🔢</span><div><span class="metric-label">NUMEROT</span><span class="metric-value" id="pv-numbers">–</span></div></div>
+      <div class="pw-metric" id="pm-special"><span class="metric-icon">⚡</span><div><span class="metric-label">ERIKOISMERKIT</span><span class="metric-value" id="pv-special">–</span></div></div>
+    </div>
+    <div class="crack-time"><div class="label">ARVIOITU MURTAMISAIKA</div><div class="time" id="crack-time">Kirjoita salasana...</div></div>
+    <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+      <input class="save-input" id="sv-password" placeholder="NIMESI..." maxlength="20" style="flex:1">
+      <button class="save-btn" id="pw-save-btn" onclick="savePWScore()" style="padding:12px 20px;opacity:0.5;pointer-events:none">TALLENNA</button>
+    </div>
+    <div class="pw-tips" style="margin-top:16px"><h4>PARHAAT VINKIT</h4>
+      <ul><li>Käytä vähintään 16 merkkiä</li><li>Kokeile sanoja yhdistäen: "koira-auto-Helsinki-2025"</li><li>Älä käytä henkilötietoja (syntymäpäivä, nimi)</li><li>Käytä salasananhallintaa (Bitwarden, 1Password)</li><li>Eri salasana jokaiselle palvelulle!</li></ul></div>
+  </div>`;
+      }
+      let currentCrackStr = "";
+      function analyzePW(pw) {
+        if (!pw) {
+          document.getElementById("crack-time").textContent =
+            "Kirjoita salasana...";
+          document.getElementById("pw-bar").style.width = "0%";
+          return;
+        }
+        const len = pw.length,
+          hasUpper = /[A-Z]/.test(pw),
+          hasLower = /[a-z]/.test(pw),
+          hasNumber = /[0-9]/.test(pw),
+          hasSpecial = /[^A-Za-z0-9]/.test(pw);
+        const hasCommon = [
+          "password",
+          "salasana",
+          "qwerty",
+          "123456",
+          "letmein",
+          "admin",
+          "welcome",
+        ].some((c) => pw.toLowerCase().includes(c));
+        let charset = 0;
+        if (hasLower) charset += 26;
+        if (hasUpper) charset += 26;
+        if (hasNumber) charset += 10;
+        if (hasSpecial) charset += 32;
+        let score =
+          Math.min(len * 4, 40) +
+          (hasUpper ? 10 : 0) +
+          (hasNumber ? 10 : 0) +
+          (hasSpecial ? 20 : 0) +
+          (len >= 16 ? 15 : 0);
+        if (hasCommon) score = Math.max(score - 30, 5);
+        score = Math.min(score, 100);
+        const seconds = Math.pow(charset || 1, len) / 2 / 1e10;
+        let ct;
+        if (hasCommon || seconds < 1) ct = "< 1 sekunti";
+        else if (seconds < 60) ct = Math.round(seconds) + " sekuntia";
+        else if (seconds < 3600) ct = Math.round(seconds / 60) + " minuuttia";
+        else if (seconds < 86400) ct = Math.round(seconds / 3600) + " tuntia";
+        else if (seconds < 2592000)
+          ct = Math.round(seconds / 86400) + " päivää";
+        else if (seconds < 31536000)
+          ct = Math.round(seconds / 2592000) + " kuukautta";
+        else if (seconds < 3153600000)
+          ct = Math.round(seconds / 31536000) + " vuotta";
+        else ct = "> 100 vuotta";
+        currentCrackStr = ct;
+        document.getElementById("crack-time").textContent = ct;
+        const color =
+          score < 30 ? "var(--red)" : score < 60 ? "#c8a832" : "var(--green)";
+        document.getElementById("pw-bar").style.width = score + "%";
+        document.getElementById("pw-bar").style.background = color;
+        setMetric(
+          "pm-length",
+          "pv-length",
+          len + " merkkiä",
+          len >= 12 ? "ok" : len >= 8 ? "warn" : "bad",
+        );
+        setMetric(
+          "pm-upper",
+          "pv-upper",
+          hasUpper ? "Kyllä" : "Ei",
+          hasUpper ? "ok" : "warn",
+        );
+        setMetric(
+          "pm-numbers",
+          "pv-numbers",
+          hasNumber ? "Kyllä" : "Ei",
+          hasNumber ? "ok" : "warn",
+        );
+        setMetric(
+          "pm-special",
+          "pv-special",
+          hasSpecial ? "Kyllä" : "Ei",
+          hasSpecial ? "ok" : "warn",
+        );
+        const saveBtn = document.getElementById("pw-save-btn");
+        if (saveBtn) {
+          saveBtn.style.opacity = "1";
+          saveBtn.style.pointerEvents = "auto";
+        }
+      }
+      function setMetric(boxId, valId, val, cls) {
+        document.getElementById(boxId).className = "pw-metric " + cls;
+        document.getElementById(valId).textContent = val;
+      }
+      function savePWScore() {
+        const name =
+          document.getElementById("sv-password").value.trim() || "Anonyymi";
+        if (!currentCrackStr) return;
+        saveScore("password", name, 0, currentCrackStr);
+        const btn = document.getElementById("pw-save-btn");
+        btn.textContent = "TALLENNETTU";
+        btn.style.opacity = "0.6";
+        btn.style.pointerEvents = "none";
+      }
+
+      // ===================== TRIVIA =====================
+      const triviaData = [
+        {
+          q: "Mitä tarkoittaa kaksivaiheinen tunnistautuminen (2FA)?",
+          opts: [
+            "Kirjautuminen kahdella salasanalla",
+            "Vahvistus salasanalla ja toisella menetelmällä (esim. tekstiviesti)",
+            "Kahden käyttäjän lupa kirjautumiseen",
+            "Sormenjälki ja kasvoentunnistus yhdessä",
+          ],
+          correct: 1,
+          exp: "2FA lisää turvakerroksen: vaikka salasana varastettaisiin, kirjautuminen vaatii toisen vahvistuksen kuten puhelimen.",
+        },
+        {
+          q: "Mikä on phishing?",
+          opts: [
+            "Haittaohjelma joka salaa tiedostosi",
+            "Verkkosivujen kaataminen ylikuormittamalla",
+            "Huijausviestit joilla yritetään varastaa tietoja tai rahaa",
+            "Salasanojen arvaaminen automaattisesti",
+          ],
+          correct: 2,
+          exp: "Phishing tarkoittaa huijausviestejä (sähköposti, tekstiviesti, puhelu) joilla yritetään saada sinut luovuttamaan henkilötietoja tai rahaa.",
+        },
+        {
+          q: "Mikä näistä salasanoista on turvallisin?",
+          opts: [
+            "Salasana123!",
+            "p@ssw0rd",
+            "oranssi-koira-Helsinki-2024",
+            "Abc!123",
+          ],
+          correct: 2,
+          exp: "Pitkä salasana useista sanoista on usein turvallisempi kuin lyhyt mutta 'monimutkainen'. Pituus on tärkein tekijä.",
+        },
+        {
+          q: "Mitä on ransomware?",
+          opts: [
+            "Vakoiluohjelma joka kerää tietoja",
+            "Haittaohjelma joka salaa tiedostosi ja vaatii lunnaita",
+            "Sivusto joka huijaa maksutietoja",
+            "Mainosohjelma joka täyttää selaimen mainoksilla",
+          ],
+          correct: 1,
+          exp: "Ransomware salaa uhrin tiedostot ja vaatii lunnaita niiden palauttamiseksi. Se on yksi vaarallisimmista kyberuhkista.",
+        },
+        {
+          q: "Miksi julkinen WiFi voi olla vaarallinen?",
+          opts: [
+            "Se on aina hitaampaa",
+            "Hakkerit voivat siepata salaukseton liikennettä tai luoda väärennettyjä verkkoja",
+            "Julkiset verkot tallentavat kaikki vieraillut sivustot",
+            "Akku kuluu nopeammin",
+          ],
+          correct: 1,
+          exp: "Julkisissa verkoissa liikenne voi olla salaamatonta, ja hakkerit voivat perustaa 'evil twin' -verkkoja jotka näyttävät aitoilta.",
+        },
+        {
+          q: "Kuinka usein salasanat tulisi vaihtaa?",
+          opts: [
+            "Joka viikko",
+            "Aina kun epäilet tietomurtoa tai salasanasi paljastuneen",
+            "Kerran vuodessa pakollisesti",
+            "Ei koskaan jos salasana on tarpeeksi vahva",
+          ],
+          correct: 1,
+          exp: "Nykyinen suositus: vaihda salasana heti epäillessä tietomurtoa. Pakolliset säännölliset vaihdot johtavat heikompiin salasanoihin.",
+        },
+        {
+          q: "Mikä on VPN?",
+          opts: [
+            "Virusskannaaja ladattaville tiedostoille",
+            "Salaus joka piilottaa internet-liikenteesi ja maskeeraa IP-osoitteesi",
+            "Palomuuriohjelma joka estää haittasivustot",
+            "Varmuuskopiointiohjelmisto",
+          ],
+          correct: 1,
+          exp: "VPN (Virtual Private Network) salaa internet-liikenteesi ja piilottaa IP-osoitteesi. Erityisen hyödyllinen julkisissa verkoissa.",
+        },
+        {
+          q: "Mitä tarkoittaa tietovuoto (data breach)?",
+          opts: [
+            "Tietokoneen kaatuminen tallennuksen aikana",
+            "Internetyhteyden katkeaminen",
+            "Luvaton pääsy suojattuihin tietoihin, kuten käyttäjätietokantoihin",
+            "Salasanan unohtaminen",
+          ],
+          correct: 2,
+          exp: "Tietovuodossa hakkerit pääsevät käsiksi suojattuihin tietoihin. Voit tarkistaa onko sähköpostisi vuotanut: haveibeenpwned.com",
+        },
+        {
+          q: "Mikä on social engineering?",
+          opts: [
+            "Sosiaalisen median käyttö markkinoinnissa",
+            "Ihmisten psykologinen manipulointi tietojen tai pääsyn saamiseksi",
+            "Ryhmätyöskentely tietoturvaongelmien ratkaisemiseksi",
+            "Tietoturvakoulutuksen järjestäminen",
+          ],
+          correct: 1,
+          exp: "Social engineering hyödyntää ihmisten luottamusta, pelkoa tai auttamishalua. Phishing on yleisin esimerkki.",
+        },
+        {
+          q: "Mitä teet jos saat epäilyttävän linkin tutulta WhatsAppissa?",
+          opts: [
+            "Klikkaan linkin koska tunnen lähettäjän",
+            "Lähetän linkin edelleen muille varoituksena",
+            "Varmistan linkin aitouden soittamalla lähettäjälle",
+            "Poistan sovelluksen välittömästi",
+          ],
+          correct: 2,
+          exp: "Tuttujen tilit voidaan hakkeroida. Epäilyttävä linkki kannattaa aina varmistaa soittamalla tai viestittämällä toisella kanavalla.",
+        },
+      ];
+      let triviaIndex = 0,
+        triviaScore = 0;
+
+      function renderTrivia() {
+        if (triviaIndex >= triviaData.length) {
+          showTriviaResult();
+          return;
+        }
+        answered = false;
+        const d = triviaData[triviaIndex];
+        document.getElementById("trivia-score").textContent =
+          triviaScore + " / " + triviaData.length;
+        document.getElementById("trivia-progress").style.width =
+          (triviaIndex / triviaData.length) * 100 + "%";
+        const letters = ["A", "B", "C", "D"];
+        document.getElementById("trivia-content").innerHTML =
+          `<div class="anim">
+    <div class="trivia-question"><div class="q-number">KYSYMYS ${triviaIndex + 1} / ${triviaData.length}</div><h3>${d.q}</h3></div>
+    <div class="trivia-options">${d.opts.map((o, i) => `<button class="trivia-opt" id="topt-${i}" onclick="answerTrivia(${i})"><span class="opt-letter">${letters[i]}</span>${o}</button>`).join("")}</div>
+    <div class="feedback-box" id="trivia-feedback"></div>
+    <button class="next-btn" id="trivia-next" onclick="nextTrivia()">${triviaIndex < triviaData.length - 1 ? "SEURAAVA →" : "TULOKSET →"}</button>
+  </div>`;
+      }
+      function answerTrivia(choice) {
+        if (answered) return;
+        answered = true;
+        const d = triviaData[triviaIndex];
+        const correct = choice === d.correct;
+        if (correct) triviaScore++;
+        d.opts.forEach((_, i) => {
+          const b = document.getElementById("topt-" + i);
+          b.disabled = true;
+          if (i === d.correct) b.classList.add("correct");
+          else if (i === choice && !correct) b.classList.add("wrong");
+        });
+        const fb = document.getElementById("trivia-feedback");
+        fb.className = "feedback-box show" + (correct ? "" : " wrong");
+        fb.innerHTML = `<h3>${correct ? "Oikein!" : "Väärin."} ${correct ? "Hyvin tehty!" : "Oikea: " + d.opts[d.correct]}</h3><p>${d.exp}</p>`;
+        document.getElementById("trivia-next").classList.add("show");
+      }
+      function nextTrivia() {
+        triviaIndex++;
+        renderTrivia();
+      }
+      function showTriviaResult() {
+        const pct = Math.round((triviaScore / triviaData.length) * 100);
+        const msg =
+          pct === 100
+            ? "Täydellinen suoritus! Olet tietoturvaguru."
+            : pct >= 80
+              ? "Erinomainen tietous!"
+              : pct >= 60
+                ? "Hyvä tulos – perusteissa vahva."
+                : "Jatka oppimista – tietoturva kannattaa!";
+        showScreen("result");
+        document.getElementById("result-content").innerHTML =
+          `<div class="result-screen anim">
+    <div class="result-score">${triviaScore}/${triviaData.length}</div>
+    <div class="result-label">PISTETTÄ // TIETOTURVATRIVIA</div>
+    <div class="result-message">${msg}</div>
+    <div class="save-score-box"><h3>TALLENNA TULOKSESI</h3>
+      <div class="save-row"><input class="save-input" id="sv-trivia" placeholder="NIMESI..." maxlength="20">
+      <button class="save-btn" onclick="doSave('trivia',${triviaScore},null)">TALLENNA</button></div></div>
+    <div class="result-badges">
+      <div class="badge ${pct === 100 ? "earned" : ""}">GURU</div>
+      <div class="badge ${pct >= 80 ? "earned" : ""}">ASIANTUNTIJA</div>
+      <div class="badge ${pct >= 60 ? "earned" : ""}">TURVALLINEN</div>
+    </div>
+    <div class="result-btns">
+      <button class="play-again-btn primary" onclick="startGame('trivia')">UUDELLEEN</button>
+      <button class="play-again-btn" onclick="goMenu()">VALIKKO</button>
+    </div>
+  </div>`;
+      }
+
+      // ===================== TRIVIA 2 =====================
+      const trivia2Data = [
+        {
+          q: "Mikä on SQL-injektio?",
+          opts: [
+            "Tietokannan varmuuskopiointimenetelmä",
+            "Hyökkäys, jossa haitallista SQL-koodia syötetään sovelluksen syötekenttiin",
+            "Tapa optimoida SQL-kyselyjä",
+            "Tietokantapalvelimen päivitysprotokolla",
+          ],
+          correct: 1,
+          exp: "SQL-injektiossa hyökkääjä syöttää haitallista SQL-koodia lomakekenttiin tai URL-parametreihin. Se voi johtaa tietokannan täydelliseen hallintaan. Torjutaan parametrisoiduilla kyselyillä.",
+        },
+        {
+          q: "Mitä tarkoittaa 'zero-day'-haavoittuvuus?",
+          opts: [
+            "Haavoittuvuus, joka on ollut tiedossa nolla päivää ennen korjausta",
+            "Haavoittuvuus, johon valmistajalla ei ole vielä korjausta julkaisuhetkellä",
+            "Ohjelmistovirhe, joka kaataa järjestelmän välittömästi",
+            "Haavoittuvuus, joka vaatii fyysistä pääsyä laitteelle",
+          ],
+          correct: 1,
+          exp: "Zero-day on haavoittuvuus, jonka valmistaja ei tiedä tai johon ei ole vielä saatavilla korjauspäivitystä. Hyökkääjät voivat hyödyntää sitä ennen kuin kukaan reagoi.",
+        },
+        {
+          q: "Mikä seuraavista kuvaa parhaiten 'man-in-the-middle' -hyökkäystä?",
+          opts: [
+            "Hyökkääjä asettuu kahden kommunikoivan osapuolen väliin salakuuntelemaan tai muuttamaan viestintää",
+            "Hyökkääjä lähettää niin paljon liikennettä, että palvelin kaatuu",
+            "Hyökkääjä murtautuu fyysisesti palvelinsaliin",
+            "Hyökkääjä arvaa salasanan brute force -menetelmällä",
+          ],
+          correct: 0,
+          exp: "MITM-hyökkäyksessä hyökkääjä sieppaa ja mahdollisesti muuttaa kahden osapuolen välistä liikennettä heidän tietämättään. TLS/HTTPS ja sertifikaattien tarkistus suojaavat tältä.",
+        },
+        {
+          q: "Mitä HTTPS:n S tarkoittaa teknisesti?",
+          opts: [
+            "Speed – nopeampi yhteys",
+            "Secure – yhteys salataan TLS-protokollalla",
+            "Standard – noudattaa ISO-standardia",
+            "Static – sivusto ei käytä dynaamista sisältöä",
+          ],
+          correct: 1,
+          exp: "HTTPS käyttää TLS-protokollaa (aiemmin SSL) liikenteen salaamiseen. Se suojaa salakuuntelulta ja varmistaa, että olet yhteydessä oikeaan palvelimeen sertifikaatin avulla.",
+        },
+        {
+          q: "Mikä on 'brute force' -hyökkäys?",
+          opts: [
+            "Sosiaalisen manipuloinnin muoto",
+            "Kaikkien mahdollisten salasanayhdistelmien systemaattinen kokeilu",
+            "Palvelimen muistin ylikuormittaminen",
+            "Haittaohjelman levittäminen sähköpostin liitteiden kautta",
+          ],
+          correct: 1,
+          exp: "Brute force kokeilee kaikki mahdolliset salasanat järjestelmällisesti. Pitkä salasana tekee tästä käytännössä mahdottoman – 16-merkkinen salasana kestää miljardeja vuosia murtaa.",
+        },
+        {
+          q: "Mikä on palomuurin (firewall) päätehtävä?",
+          opts: [
+            "Salata kovalevyn tiedostot",
+            "Skannata virukset sähköposteista",
+            "Valvoa ja suodattaa verkkoliikennettä sääntöjen perusteella",
+            "Varmuuskopioida tiedot automaattisesti",
+          ],
+          correct: 2,
+          exp: "Palomuuri valvoo sisään- ja ulosmenevää verkkoliikennettä ja sallii tai estää yhteydet määritettyjen sääntöjen perusteella. Se on yksi verkon perussuojauskerroksista.",
+        },
+        {
+          q: "Mitä tarkoittaa 'least privilege' -periaate?",
+          opts: [
+            "Käyttäjille annetaan vain ne oikeudet, joita he tarvitsevat tehtäviensä suorittamiseen",
+            "Järjestelmän tärkein käyttäjätili poistetaan käytöstä oletuksena",
+            "Salasanat tallennetaan minimaalisella salauksella",
+            "Kaikilla käyttäjillä on samat oikeudet tasapuolisuuden vuoksi",
+          ],
+          correct: 0,
+          exp: "Least privilege -periaate rajoittaa käyttöoikeudet minimiin. Jos tili kompromisoidaan, hyökkääjä saa vain rajoitetun pääsyn. Se on yksi tietoturvan perusperiaatteista.",
+        },
+        {
+          q: "Mikä on XSS (Cross-Site Scripting)?",
+          opts: [
+            "Haittaohjelma, joka leviää USB-tikujen kautta",
+            "Hyökkäys, jossa haitallista skriptiä injektoidaan verkkosivulle muiden käyttäjien selaimissa ajettavaksi",
+            "Tapa siirtää istuntoeväste palvelimelta toiselle",
+            "SSL-sertifikaatin vanheneminen",
+          ],
+          correct: 1,
+          exp: "XSS-hyökkäyksessä hyökkääjä saa haitallisen JavaScript-koodin ajettua uhrin selaimessa, esim. varastamaan istuntoevästeita. Torjutaan syötteiden validoinnilla ja Content Security Policylla.",
+        },
+        {
+          q: "Mitä tarkoittaa 'defense in depth'?",
+          opts: [
+            "Yksi erittäin vahva suojauskerros riittää",
+            "Tietoturva rakentuu useista päällekkäisistä suojauskerroksista",
+            "Syvä tuntemus yhdestä tietoturva-alueesta",
+            "Verkon suojaaminen ainoastaan palomuurilla",
+          ],
+          correct: 1,
+          exp: "Defense in depth -strategiassa käytetään useita suojauskerroksia: palomuuri, virustorjunta, salaus, käyttöoikeuksien hallinta jne. Yhden kerroksen pettäessä muut suojaavat silti.",
+        },
+        {
+          q: "Mikä on digitaalinen allekirjoitus?",
+          opts: [
+            "Sähköinen kuva käsinkirjoitetusta allekirjoituksesta",
+            "Salausavaimeen perustuva mekanismi, joka todistaa viestin alkuperän ja eheyden",
+            "PIN-koodi sähköisen tunnistautumisen yhteydessä",
+            "Salainen kysymys salasanan palautukseen",
+          ],
+          correct: 1,
+          exp: "Digitaalinen allekirjoitus käyttää julkisen avaimen kryptografiaa: lähettäjä allekirjoittaa viestinsä yksityisellä avaimellaan, vastaanottaja varmistaa sen julkisella avaimella. Se takaa sekä alkuperän että eheyden.",
+        },
+      ];
+      let trivia2Index = 0, trivia2Score = 0;
+
+      function renderTrivia2() {
+        if (trivia2Index >= trivia2Data.length) {
+          showTrivia2Result();
+          return;
+        }
+        answered = false;
+        const d = trivia2Data[trivia2Index];
+        document.getElementById("trivia2-score").textContent =
+          trivia2Score + " / " + trivia2Data.length;
+        document.getElementById("trivia2-progress").style.width =
+          (trivia2Index / trivia2Data.length) * 100 + "%";
+        const letters = ["A", "B", "C", "D"];
+        document.getElementById("trivia2-content").innerHTML =
+          `<div class="anim">
+    <div class="trivia-question"><div class="q-number">KYSYMYS ${trivia2Index + 1} / ${trivia2Data.length}</div><h3>${d.q}</h3></div>
+    <div class="trivia-options">${d.opts.map((o, i) => `<button class="trivia-opt" id="t2opt-${i}" onclick="answerTrivia2(${i})"><span class="opt-letter">${letters[i]}</span>${o}</button>`).join("")}</div>
+    <div class="feedback-box" id="trivia2-feedback"></div>
+    <button class="next-btn" id="trivia2-next" onclick="nextTrivia2()">${trivia2Index < trivia2Data.length - 1 ? "SEURAAVA →" : "TULOKSET →"}</button>
+  </div>`;
+      }
+      function answerTrivia2(choice) {
+        if (answered) return;
+        answered = true;
+        const d = trivia2Data[trivia2Index];
+        const correct = choice === d.correct;
+        if (correct) trivia2Score++;
+        d.opts.forEach((_, i) => {
+          const b = document.getElementById("t2opt-" + i);
+          b.disabled = true;
+          if (i === d.correct) b.classList.add("correct");
+          else if (i === choice && !correct) b.classList.add("wrong");
+        });
+        const fb = document.getElementById("trivia2-feedback");
+        fb.className = "feedback-box show" + (correct ? "" : " wrong");
+        fb.innerHTML = `<h3>${correct ? "Oikein!" : "Väärin."} ${correct ? "Hyvin tehty!" : "Oikea: " + d.opts[d.correct]}</h3><p>${d.exp}</p>`;
+        document.getElementById("trivia2-next").classList.add("show");
+      }
+      function nextTrivia2() {
+        trivia2Index++;
+        renderTrivia2();
+      }
+      function showTrivia2Result() {
+        const pct = Math.round((trivia2Score / trivia2Data.length) * 100);
+        const msg =
+          pct === 100
+            ? "Täydellinen! Olet kyberturvallisuuden tekninen asiantuntija."
+            : pct >= 80
+              ? "Erinomainen tekninen osaaminen!"
+              : pct >= 60
+                ? "Hyvä pohja – jatka syventämistä."
+                : "Tekninen tietoturva on laaja ala – kannattaa opiskella lisää!";
+        showScreen("result");
+        document.getElementById("result-content").innerHTML =
+          `<div class="result-screen anim">
+    <div class="result-score">${trivia2Score}/${trivia2Data.length}</div>
+    <div class="result-label">PISTETTÄ // TIETOTURVATRIVIA 2</div>
+    <div class="result-message">${msg}</div>
+    <div class="save-score-box"><h3>TALLENNA TULOKSESI</h3>
+      <div class="save-row"><input class="save-input" id="sv-trivia2" placeholder="NIMESI..." maxlength="20">
+      <button class="save-btn" onclick="doSave('trivia2',${trivia2Score},null)">TALLENNA</button></div></div>
+    <div class="result-badges">
+      <div class="badge ${pct === 100 ? "earned" : ""}">GURU</div>
+      <div class="badge ${pct >= 80 ? "earned" : ""}">TEKNINEN ASIANTUNTIJA</div>
+      <div class="badge ${pct >= 60 ? "earned" : ""}">TURVALLINEN</div>
+    </div>
+    <div class="result-btns">
+      <button class="play-again-btn primary" onclick="startGame('trivia2')">UUDELLEEN</button>
+      <button class="play-again-btn" onclick="goMenu()">VALIKKO</button>
+    </div>
+  </div>`;
+      }
+
+      // ===================== WORKDAY =====================
+      const workdayData = [
+        {
+          time: "08:15",
+          type: "SÄHKÖPOSTI",
+          title: "Epäilyttävä tukipyyntö",
+          detail:
+            "Saat sähköpostin: 'Hei, olen uusi harjoittelija. IT ei vastaa. Voisitko nollata salasanani pikaisesti? Tarvitsen pääsyn heti kokousta varten. – Mikael'\n\nMikael ei ole sinulle tuttu.",
+          options: [
+            "Nollaan salasanan heti – kokoukseen on kiire",
+            "Pyydän häntä ottamaan yhteyttä IT-helpdesk kautta oikeilla tunnuksilla",
+            "Soitan esimiehelle ja kysyn onko henkilö töissä meillä",
+            "Pyydän häntä lähettämään kuvallisen henkilötodistuksen sähköpostilla",
+          ],
+          correct: 1,
+          threat: 30,
+          exp: "Oikein! Salasanan nollaus ilman identiteetin vahvistusta on suuri tietoturvariski. IT-helpdesk on juuri tätä varten – heillä on prosessi identiteetin varmistamiseen.",
+        },
+        {
+          time: "09:30",
+          type: "HÄLYTYS",
+          title: "SIEM-järjestelmä raportoi epäilyttävää kirjautumista",
+          detail:
+            "SIEM-hälytys: Käyttäjätili 'janne.virtanen' on kirjautunut sisään Singaporesta klo 02:14 (paikallinen aika). Sama tunnus käytettiin Helsingissä klo 16:00 eilen.\n\nJanne Virtanen on yrityksen controller.",
+          options: [
+            "Tämä voi olla matkailu – ei tarvitse tehdä mitään",
+            "Lukitsen tilin välittömästi ja soitan Jannelle",
+            "Lähetän Jannelle sähköpostin kysyäkseni oliko hän Singaporessa",
+            "Kirjaan havainnon muistiin ja käyn läpi viikon päästä",
+          ],
+          correct: 1,
+          threat: 25,
+          exp: "Oikein! Mahdoton matkailu (Helsinki → Singapore alle 6h) on selkeä merkki mahdollisesta tilikaappauksesta. Tili tulee lukita ja henkilöllisyys vahvistaa puhelimitse välittömästi.",
+        },
+        {
+          time: "10:45",
+          type: "TEKNINEN",
+          title: "Kehittäjä pyytää poikkeusluvan",
+          detail:
+            "Kehitystiimin johtaja Petra kirjoittaa Slackissa: 'Meillä on kiireinen deadline. Voisitko avata portit 8080-8090 suoraan internettiin väliaikaisesti? Tarvitaan vain tänään.'\n\nPetra on luotettava kollega.",
+          options: [
+            "Avaan portit – Petra on luotettava ja deadline on tärkeä",
+            "Pyydän Petraa lähettämään virallisen muutospyynnön ja perusteet tietoturvatiimille",
+            "Avaan portit vain 2 tunniksi ja suljetaan illalla",
+            "Ehdotan VPN-yhteyden käyttöä tai DMZ-ratkaisua sen sijaan",
+          ],
+          correct: 3,
+          threat: 20,
+          exp: "Paras vastaus! Avoimet portit internettiin ovat vakava riski riippumatta aikarajoituksesta. VPN tai DMZ tarjoaa saman toiminnallisuuden turvallisesti – ja ratkaisee Petran ongelman.",
+        },
+        {
+          time: "12:00",
+          type: "TAUKO",
+          title: "Lounastauolla yllätys",
+          detail:
+            "Löydät pöydältä USB-tikun jossa on tarra: 'PALKANLASKENTATIEDOT 2025 – LUOTTAMUKSELLINEN'\n\nTikku on löytynyt toimiston kahvihuoneesta.",
+          options: [
+            "Liitän tikun omaan koneeseen nähdäkseni kenelle se kuuluu",
+            "Liitän tikun suojattuun sandbox-ympäristöön tarkastamista varten",
+            "Toimitan tikun IT-turvallisuudelle avaamatta sitä",
+            "Heitän tikun roskiin – ei se minulle kuulu",
+          ],
+          correct: 2,
+          threat: 0,
+          exp: "Oikein! Tuntematon USB-tikku on klassisin sosiaalinen hyökkäys. 'Houkutustikut' on yleinen tapa levittää haittaohjelmia. Tikku toimitetaan IT-turvallisuudelle tutkittavaksi.",
+        },
+        {
+          time: "14:20",
+          type: "PUHELU",
+          title: "Soitto 'Microsoft Supportista'",
+          detail:
+            "Saat puhelun: 'Hei, olen James Microsoftilta. Järjestelmämme havaitsivat vakavan viruksen tietokoneessanne. Tarvitaan etäyhteys heti korjaamiseksi. Voitko avata TeamViewerin?'\n\nPuhuja kuulostaa ammattimaiselta.",
+          options: [
+            "Avaan TeamViewerin – Microsoft on luotettava",
+            "Kerron että en anna etäyhteyttä tuntemattomille ja katkaisen puhelun",
+            "Pyydän soittajan tiedot ja soitan takaisin Microsoftin viralliseen numeroon",
+            "Pyydän kirjallista vahvistusta ennen kuin annan etäyhteyden",
+          ],
+          correct: 1,
+          threat: 0,
+          exp: "Oikein! Microsoft tai muut teknologiayritykset eivät koskaan soita pyytääkseen etäyhteyttä. Tämä on klassinen 'tech support scam'. Katkaisen puhelun ja raportoin.",
+        },
+        {
+          time: "15:45",
+          type: "PÄÄSYOIKEUS",
+          title: "Kollegalle ylimääräiset oikeudet?",
+          detail:
+            "HR-johtaja pyytää: 'Petteri siirtyy uuteen rooliin ensi kuussa. Voisitko antaa hänelle jo nyt pääsyn kaikkiin taloudenhallintajärjestelmiin? Helpottaa siirtymää.'\n\nPyyntö tulee tuttulta HR-johtajalta.",
+          options: [
+            "Annan oikeudet heti – HR-johtajan pyyntö on laillinen",
+            "Pyydän virallisen muutospyynnön ja esimiehen hyväksynnän dokumentoituna",
+            "Annan väliaikaiset oikeudet kuukaudeksi ja tarkistan sitten",
+            "Soitan Petterille suoraan ja pyydän häntä vahvistamaan tarve",
+          ],
+          correct: 1,
+          threat: 15,
+          exp: "Oikein! Pääsyoikeuksien muutokset vaativat aina virallisen dokumentaation ja hyväksynnät. 'Least privilege' -periaate: oikeudet myönnetään vasta kun rooli alkaa, ei etukäteen.",
+        },
+        {
+          time: "16:30",
+          type: "INCIDENT",
+          title: "Kollegalla epäilyttävää toimintaa",
+          detail:
+            "Huomaat SIEM-raportissa: kollega Markku on ladannut viimeisen viikon aikana 3,2 GB tiedostoja SharePointista henkilökohtaiseen Dropboxiinsa. Markku irtisanoutui tänään.\n\nMarkku lähtee 2 viikon kuluttua.",
+          options: [
+            "Ei tarvitse reagoida – Markku on rehellinen kollega",
+            "Raportoin heti tietoturvapäällikölle ja HR:lle, dokumentoin havainnot",
+            "Puhun Markulle suoraan ja pyydän häntä selittämään",
+            "Odotellaan Markun viimeistä päivää ja tarkistetaan sitten",
+          ],
+          correct: 1,
+          threat: 0,
+          exp: "Oikein! Irtisanoutuvan henkilön massiivinen tiedostolataus on vakava sisäpiiriuhkamerkki. Tapaus raportoidaan välittömästi – se on prosessi, ei syytös.",
+        },
+        {
+          time: "17:45",
+          type: "RAPORTTI",
+          title: "Tietoturvaraportti johtoryhmälle",
+          detail:
+            "Sinulle annetaan tehtäväksi esitellä kuukauden tietoturvatilanne johtoryhmälle. Päivän aikana on tapahtunut useita läheltä piti -tilanteita. Miten esität asian?",
+          options: [
+            "Kerron vain positiivisista asioista – ei kannata pelotella johtoa",
+            "Raportoin kaikki tapaukset rehellisesti, toimenpiteet ja suositukset budjettia varten",
+            "Pienentelen riskejä – ei haluta lisää byrokratiaa",
+            "Delegoin raportoinnin assistentille – johtoryhmäkokoukset eivät ole minun juttuni",
+          ],
+          correct: 1,
+          threat: 0,
+          exp: "Oikein! Rehellinen, faktapohjainen raportointi on tietoturva-ammattilaisen velvollisuus. Johtoryhmä tarvitsee oikean tiedon päätöksentekoon – myös ikävät uutiset.",
+        },
+      ];
+      let wdayIndex = 0,
+        wdayScore = 0,
+        wdayThreat = 0;
+
+      function renderWorkday() {
+        if (wdayIndex >= workdayData.length) {
+          showWorkdayResult();
+          return;
+        }
+        answered = false;
+        const d = workdayData[wdayIndex];
+        const threatPct = Math.min(wdayThreat, 100);
+        const threatColor =
+          threatPct < 30
+            ? "var(--green)"
+            : threatPct < 60
+              ? "#c8a832"
+              : "var(--red)";
+        document.getElementById("workday-score").textContent =
+          "Uhkataso: " + threatPct + "%";
+        document.getElementById("workday-progress").style.width =
+          (wdayIndex / workdayData.length) * 100 + "%";
+        document.getElementById("workday-content").innerHTML =
+          `<div class="anim">
+    <div class="wday-threat-meter">
+      <div class="wday-threat-label"><span>UHKATASO</span><span>${threatPct}%</span></div>
+      <div class="wday-threat-bar"><div class="wday-threat-fill" style="width:${threatPct}%;background:${threatColor}"></div></div>
+    </div>
+    <div class="wday-scenario">
+      <div class="scenario-type">${d.time} // ${d.type}</div>
+      <h3>${d.title}</h3>
+      <div class="details">${d.detail}</div>
+    </div>
+    <div class="wday-options">${d.options.map((o, i) => `<button class="wday-opt" id="wopt-${i}" onclick="answerWorkday(${i})"><span class="opt-key">${String.fromCharCode(65 + i)}</span>${o}</button>`).join("")}</div>
+    <div class="feedback-box" id="workday-feedback"></div>
+    <button class="next-btn" id="workday-next" onclick="nextWorkday()">${wdayIndex < workdayData.length - 1 ? "SEURAAVA TILANNE →" : "PÄIVÄ PÄÄTTYY – TULOKSET →"}</button>
+  </div>`;
+      }
+      function answerWorkday(choice) {
+        if (answered) return;
+        answered = true;
+        const d = workdayData[wdayIndex];
+        const correct = choice === d.correct;
+        if (correct) wdayScore++;
+        else wdayThreat += d.threat;
+        d.options.forEach((_, i) => {
+          const b = document.getElementById("wopt-" + i);
+          b.disabled = true;
+          if (i === d.correct) b.classList.add("correct");
+          else if (i === choice && !correct) b.classList.add("wrong");
+        });
+        const fb = document.getElementById("workday-feedback");
+        fb.className = "feedback-box show" + (correct ? "" : " wrong");
+        fb.innerHTML = `<h3>${correct ? "Oikea päätös!" : "Vaarallinen päätös!"} ${correct ? "Uhkataso ei nouse." : "Uhkataso nousee +" + d.threat + "%!"}</h3><p>${d.exp}</p>`;
+        document.getElementById("workday-next").classList.add("show");
+      }
+      function nextWorkday() {
+        wdayIndex++;
+        renderWorkday();
+      }
+      function showWorkdayResult() {
+        const survivedPct = Math.max(0, 100 - wdayThreat);
+        const pct = Math.round((wdayScore / workdayData.length) * 100);
+        const msg =
+          survivedPct >= 90
+            ? "Erinomainen! Yritys on turvassa. Olet huippuammattilainen."
+            : survivedPct >= 70
+              ? "Hyvä suoritus! Muutama päätös olisi voinut olla parempi."
+              : survivedPct >= 50
+                ? "Selvityit, mutta tarkenna prosessejasi."
+                : "Yritys on vaarassa! Kertaa tietoturvakäytännöt.";
+        showScreen("result");
+        document.getElementById("result-content").innerHTML =
+          `<div class="result-screen anim">
+    <div class="result-score">${survivedPct}%</div>
+    <div class="result-label">SELVIYTYMISASTE // ASIANTUNTIJAN PÄIVÄ</div>
+    <div class="result-message">${msg}<br><span style="font-size:0.85rem;color:var(--muted)">Oikeita päätöksiä: ${wdayScore}/${workdayData.length} • Uhkataso: ${wdayThreat}%</span></div>
+    <div class="save-score-box"><h3>TALLENNA TULOKSESI</h3>
+      <div class="save-row"><input class="save-input" id="sv-workday" placeholder="NIMESI..." maxlength="20">
+      <button class="save-btn" onclick="doSave('workday',${survivedPct},'${survivedPct}')">TALLENNA</button></div></div>
+    <div class="result-badges">
+      <div class="badge ${survivedPct >= 90 ? "earned" : ""}">TIETOTURVASANKARI</div>
+      <div class="badge ${survivedPct >= 70 ? "earned" : ""}">AMMATTILAINEN</div>
+      <div class="badge ${wdayScore === workdayData.length ? "earned" : ""}">TÄYDELLINEN</div>
+      <div class="badge ${wdayThreat === 0 ? "earned" : ""}">NOLLA UHKAA</div>
+    </div>
+    <div class="result-btns">
+      <button class="play-again-btn primary" onclick="startGame('workday')">UUDELLEEN</button>
+      <button class="play-again-btn" onclick="goMenu()">VALIKKO</button>
+    </div>
+  </div>`;
+      }
+
+      // ===================== SAVE HELPER =====================
+      function doSave(game, score, extra) {
+        const nameEl = document.getElementById("sv-" + game);
+        const name = nameEl ? nameEl.value.trim() || "Anonyymi" : "Anonyymi";
+        const extraVal = extra !== null ? extra : null;
+        saveScore(game, name, score, extraVal);
+        // Disable button
+        const btn = nameEl ? nameEl.nextElementSibling : null;
+        if (btn) {
+          btn.textContent = "✅ TALLENNETTU";
+          btn.disabled = true;
+          btn.style.opacity = "0.5";
+        }
+      }
+
+      // Init
+      updateMenuBests();
+    </script>
+  </body>
+</html>
