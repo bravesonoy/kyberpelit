@@ -203,7 +203,7 @@
         text-transform: uppercase;
       }
       .game-card p {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         color: var(--text-soft);
         line-height: 1.5;
       }
@@ -1082,44 +1082,44 @@
           <p>Testaa taitosi Kyberpelien parissa!</p>
         </div>
         <div class="game-grid">
-          <div class="game-card gc1" onclick="startGame('phishing')">
-            <div class="game-card-body">
-              <h2>Peli 1 · Phishing-tunnistus</h2>
-              <p>Onko viesti aito vai huijaus? Tunnista petosviestit ennen kuin on liian myöhäistä.</p>
-              <div class="difficulty">6 kierrosta</div>
-              <div class="best-score" id="best-phishing">Ei tuloksia vielä</div>
-            </div>
-          </div>
-          <div class="game-card gc2" onclick="startGame('password')">
-            <div class="game-card-body">
-              <h2>Peli 2 · Salasana-analysoija</h2>
-              <p>Kuinka turvallinen salasanasi on? Live-analyysi reaaliajassa.</p>
-              <div class="difficulty">Interaktiivinen</div>
-              <div class="best-score" id="best-password">Ei tuloksia vielä</div>
-            </div>
-          </div>
           <div class="game-card gc3" onclick="startGame('trivia')">
             <div class="game-card-body">
-              <h2>Peli 3 · Tietoturvatrivia</h2>
-              <p>10 kysymystä digiturvallisuudesta – kuinka monta osaat?</p>
+              <h2>Peli 1 · Tietoturvatrivia</h2>
+              <p class="">10 kysymystä digiturvallisuudesta – kuinka monta osaat?</p>
               <div class="difficulty">10 kysymystä</div>
               <div class="best-score" id="best-trivia">Ei tuloksia vielä</div>
             </div>
           </div>
+          <div class="game-card gc3" onclick="startGame('trivia2')" style="--card-color: var(--blue)">
+            <div class="game-card-body">
+              <h2>Peli 2 · Tietoturvatrivia 2</h2>
+              <p>Tekniset haasteet: SQL-injektiot, kryptografia, hyökkäystekniikat – testaa syvempi osaamisesi.</p>
+              <div class="difficulty">10 kysymystä · Haastava</div>
+              <div class="best-score" id="best-trivia2">Ei tuloksia vielä</div>
+            </div>
+          </div>
           <div class="game-card gc4" onclick="startGame('workday')">
             <div class="game-card-body">
-              <h2>Peli 4 · Asiantuntijan päivä</h2>
+              <h2>Peli 3 · Asiantuntijan päivä</h2>
               <p>Simuloi tietoturva-asiantuntijan päivää – tee oikeat päätökset uhkien edessä.</p>
               <div class="difficulty">8 skenaariota</div>
               <div class="best-score" id="best-workday">Ei tuloksia vielä</div>
             </div>
           </div>
-          <div class="game-card gc3" onclick="startGame('trivia2')" style="--card-color: var(--blue)">
+          <div class="game-card gc2" onclick="startGame('password')">
             <div class="game-card-body">
-              <h2>Peli 5 · Tietoturvatrivia 2</h2>
-              <p>Tekniset haasteet: SQL-injektiot, kryptografia, hyökkäystekniikat – testaa syvempi osaamisesi.</p>
-              <div class="difficulty">10 kysymystä · Haastava</div>
-              <div class="best-score" id="best-trivia2">Ei tuloksia vielä</div>
+              <h2>Peli 4 · Salasana-analysoija</h2>
+              <p>Kuinka turvallinen salasanasi on? Live-analyysi reaaliajassa.</p>
+              <div class="difficulty">Interaktiivinen</div>
+              <div class="best-score" id="best-password">Ei tuloksia vielä</div>
+            </div>
+          </div>
+          <div class="game-card gc1" onclick="startGame('phishing')">
+            <div class="game-card-body">
+              <h2>Peli 5 · Phishing-tunnistus</h2>
+              <p>Onko viesti aito vai huijaus? Tunnista petosviestit ennen kuin on liian myöhäistä.</p>
+              <div class="difficulty">6 kierrosta</div>
+              <div class="best-score" id="best-phishing">Ei tuloksia vielä</div>
             </div>
           </div>
         </div>
@@ -1132,38 +1132,7 @@
         <img src="logo-vaaka-väri-valk.svg" />
       </div>
 
-      <!-- PHISHING -->
-      <div id="screen-phishing" class="screen">
-        <div class="game-header">
-          <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
-          <span class="game-title">PHISHING-TUNNISTUS</span>
-          <span class="score-badge" id="phishing-score">0 / 6</span>
-        </div>
-        <div class="tab-bar">
-          <button
-            class="tab-btn active"
-            onclick="switchTab('phishing', 'game')"
-          >
-            PELI
-          </button>
-          <button class="tab-btn" onclick="switchTab('phishing', 'board')">
-            TULOKSET
-          </button>
-        </div>
-        <div id="phishing-game-tab">
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              id="phishing-progress"
-              style="width: 0%"
-            ></div>
-          </div>
-          <div id="phishing-content"></div>
-        </div>
-        <div id="phishing-board-tab" style="display: none">
-          <div id="phishing-scoreboard"></div>
-        </div>
-      </div>
+   
 
       <!-- PASSWORD -->
       <div id="screen-password" class="screen">
@@ -1283,6 +1252,7 @@
         <div id="result-content"></div>
       </div>
     </div>
+    
     <!-- .app -->
 
     <script>
