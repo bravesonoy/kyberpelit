@@ -141,22 +141,17 @@
 
       /* ── MENU GRID ── */
       .game-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
         margin-bottom: 40px;
-      }
-      @media (max-width: 600px) {
-        .game-grid {
-          grid-template-columns: 1fr;
-        }
       }
 
       .game-card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 28px 24px 22px;
+        padding: 22px 28px;
         cursor: pointer;
         position: relative;
         overflow: hidden;
@@ -166,51 +161,56 @@
           border-color 0.25s ease,
           background 0.25s ease;
         text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 24px;
       }
       .game-card::after {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
-        height: 3px;
+        bottom: 0;
+        width: 4px;
         background: var(--card-color, var(--green));
-        border-radius: 8px 8px 0 0;
+        border-radius: 8px 0 0 8px;
         opacity: 0.7;
         transition: opacity 0.25s;
       }
       .game-card:hover {
         border-color: var(--card-color, var(--green));
-        transform: translateY(-4px);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        transform: translateX(4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
         background: var(--surface2);
       }
       .game-card:hover::after {
         opacity: 1;
       }
       .game-card .icon {
-        font-size: 2.2rem;
-        margin-bottom: 14px;
-        display: block;
+        font-size: 2rem;
+        flex-shrink: 0;
+      }
+      .game-card-body {
+        flex: 1;
       }
       .game-card h2 {
         font-family: "Outfit", sans-serif;
-        font-size: 0.78rem;
+        font-size: 1.15rem;
         font-weight: 700;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
         color: var(--card-color, var(--green));
-        margin-bottom: 10px;
+        margin-bottom: 4px;
         text-transform: uppercase;
       }
       .game-card p {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: var(--text-soft);
-        line-height: 1.65;
+        line-height: 1.5;
       }
       .game-card .difficulty {
-        margin-top: 16px;
-        font-size: 0.68rem;
-        letter-spacing: 2px;
+        margin-top: 6px;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
         color: var(--muted);
         display: flex;
         align-items: center;
@@ -1078,44 +1078,49 @@
       <div id="screen-menu" class="screen active">
         <div class="logo">
           <img src="logo-vaaka-väri-valk.svg" height="" />
-          <h2 class="text-2xl">Tietoturvapelit &nbsp;·&nbsp; Jyväskylä 2026</h2>
+          <h2 class="text-2xl">Kyberpelit &nbsp;·&nbsp; Jyväskylä 2026</h2>
+          <p>Testaa taitosi Kyberpelien parissa!</p>
         </div>
         <div class="game-grid">
           <div class="game-card gc1" onclick="startGame('phishing')">
-            <h2>Phishing-tunnistus</h2>
-            <p>
-              Onko viesti aito vai huijaus? Tunnista petosviestit ennen kuin on
-              liian myöhäistä.
-            </p>
-            <div class="difficulty">6 kierrosta</div>
-            <div class="best-score" id="best-phishing">Ei tuloksia vielä</div>
+            <div class="game-card-body">
+              <h2>Peli 1 · Phishing-tunnistus</h2>
+              <p>Onko viesti aito vai huijaus? Tunnista petosviestit ennen kuin on liian myöhäistä.</p>
+              <div class="difficulty">6 kierrosta</div>
+              <div class="best-score" id="best-phishing">Ei tuloksia vielä</div>
+            </div>
           </div>
           <div class="game-card gc2" onclick="startGame('password')">
-            <h2>Salasana-analysoija</h2>
-            <p>Kuinka turvallinen salasanasi on? Live-analyysi reaaliajassa.</p>
-            <div class="difficulty">Interaktiivinen</div>
-            <div class="best-score" id="best-password">Ei tuloksia vielä</div>
+            <div class="game-card-body">
+              <h2>Peli 2 · Salasana-analysoija</h2>
+              <p>Kuinka turvallinen salasanasi on? Live-analyysi reaaliajassa.</p>
+              <div class="difficulty">Interaktiivinen</div>
+              <div class="best-score" id="best-password">Ei tuloksia vielä</div>
+            </div>
           </div>
           <div class="game-card gc3" onclick="startGame('trivia')">
-            <h2>Tietoturvatrivia</h2>
-            <p>10 kysymystä digiturvallisuudesta – kuinka monta osaat?</p>
-            <div class="difficulty">10 kysymystä</div>
-            <div class="best-score" id="best-trivia">Ei tuloksia vielä</div>
+            <div class="game-card-body">
+              <h2>Peli 3 · Tietoturvatrivia</h2>
+              <p>10 kysymystä digiturvallisuudesta – kuinka monta osaat?</p>
+              <div class="difficulty">10 kysymystä</div>
+              <div class="best-score" id="best-trivia">Ei tuloksia vielä</div>
+            </div>
           </div>
           <div class="game-card gc4" onclick="startGame('workday')">
-            <h2>Asiantuntijan päivä</h2>
-            <p>
-              Simuloi tietoturva-asiantuntijan päivää – tee oikeat päätökset
-              uhkien edessä.
-            </p>
-            <div class="difficulty">8 skenaariota</div>
-            <div class="best-score" id="best-workday">Ei tuloksia vielä</div>
+            <div class="game-card-body">
+              <h2>Peli 4 · Asiantuntijan päivä</h2>
+              <p>Simuloi tietoturva-asiantuntijan päivää – tee oikeat päätökset uhkien edessä.</p>
+              <div class="difficulty">8 skenaariota</div>
+              <div class="best-score" id="best-workday">Ei tuloksia vielä</div>
+            </div>
           </div>
           <div class="game-card gc3" onclick="startGame('trivia2')" style="--card-color: var(--blue)">
-            <h2>Tietoturvatrivia 2</h2>
-            <p>Tekniset haasteet: SQL-injektiot, kryptografia, hyökkäystekniikat – testaa syvempi osaamisesi.</p>
-            <div class="difficulty">10 kysymystä · Haastava</div>
-            <div class="best-score" id="best-trivia2">Ei tuloksia vielä</div>
+            <div class="game-card-body">
+              <h2>Peli 5 · Tietoturvatrivia 2</h2>
+              <p>Tekniset haasteet: SQL-injektiot, kryptografia, hyökkäystekniikat – testaa syvempi osaamisesi.</p>
+              <div class="difficulty">10 kysymystä · Haastava</div>
+              <div class="best-score" id="best-trivia2">Ei tuloksia vielä</div>
+            </div>
           </div>
         </div>
         <div
@@ -2112,7 +2117,7 @@
           ],
           correct: 1,
           threat: 30,
-          exp: "Oikein! Salasanan nollaus ilman identiteetin vahvistusta on suuri tietoturvariski. IT-helpdesk on juuri tätä varten – heillä on prosessi identiteetin varmistamiseen.",
+          exp: "Salasanan nollaus ilman identiteetin vahvistusta on suuri tietoturvariski. IT-helpdesk on juuri tätä varten – heillä on prosessi identiteetin varmistamiseen.",
         },
         {
           time: "09:30",
@@ -2128,7 +2133,7 @@
           ],
           correct: 1,
           threat: 25,
-          exp: "Oikein! Mahdoton matkailu (Helsinki → Singapore alle 6h) on selkeä merkki mahdollisesta tilikaappauksesta. Tili tulee lukita ja henkilöllisyys vahvistaa puhelimitse välittömästi.",
+          exp: "Mahdoton matkailu (Helsinki → Singapore alle 6h) on selkeä merkki mahdollisesta tilikaappauksesta. Tili tulee lukita ja henkilöllisyys vahvistaa puhelimitse välittömästi.",
         },
         {
           time: "10:45",
@@ -2144,7 +2149,7 @@
           ],
           correct: 3,
           threat: 20,
-          exp: "Paras vastaus! Avoimet portit internettiin ovat vakava riski riippumatta aikarajoituksesta. VPN tai DMZ tarjoaa saman toiminnallisuuden turvallisesti – ja ratkaisee Petran ongelman.",
+          exp: "Avoimet portit internettiin ovat vakava riski riippumatta aikarajoituksesta. VPN tai DMZ tarjoaa saman toiminnallisuuden turvallisesti – ja ratkaisee Petran ongelman.",
         },
         {
           time: "12:00",
@@ -2160,7 +2165,7 @@
           ],
           correct: 2,
           threat: 0,
-          exp: "Oikein! Tuntematon USB-tikku on klassisin sosiaalinen hyökkäys. 'Houkutustikut' on yleinen tapa levittää haittaohjelmia. Tikku toimitetaan IT-turvallisuudelle tutkittavaksi.",
+          exp: "Tuntematon USB-tikku on klassisin sosiaalinen hyökkäys. 'Houkutustikut' on yleinen tapa levittää haittaohjelmia. Tikku toimitetaan IT-turvallisuudelle tutkittavaksi.",
         },
         {
           time: "14:20",
@@ -2176,7 +2181,7 @@
           ],
           correct: 1,
           threat: 0,
-          exp: "Oikein! Microsoft tai muut teknologiayritykset eivät koskaan soita pyytääkseen etäyhteyttä. Tämä on klassinen 'tech support scam'. Katkaisen puhelun ja raportoin.",
+          exp: "Microsoft tai muut teknologiayritykset eivät koskaan soita pyytääkseen etäyhteyttä. Tämä on klassinen 'tech support scam'. Oikea toiminta: katkaisen puhelun ja raportoin.",
         },
         {
           time: "15:45",
@@ -2192,7 +2197,7 @@
           ],
           correct: 1,
           threat: 15,
-          exp: "Oikein! Pääsyoikeuksien muutokset vaativat aina virallisen dokumentaation ja hyväksynnät. 'Least privilege' -periaate: oikeudet myönnetään vasta kun rooli alkaa, ei etukäteen.",
+          exp: "Pääsyoikeuksien muutokset vaativat aina virallisen dokumentaation ja hyväksynnät. 'Least privilege' -periaate: oikeudet myönnetään vasta kun rooli alkaa, ei etukäteen.",
         },
         {
           time: "16:30",
@@ -2208,7 +2213,7 @@
           ],
           correct: 1,
           threat: 0,
-          exp: "Oikein! Irtisanoutuvan henkilön massiivinen tiedostolataus on vakava sisäpiiriuhkamerkki. Tapaus raportoidaan välittömästi – se on prosessi, ei syytös.",
+          exp: "Irtisanoutuvan henkilön massiivinen tiedostolataus on vakava sisäpiiriuhkamerkki. Tapaus raportoidaan välittömästi – se on prosessi, ei syytös.",
         },
         {
           time: "17:45",
@@ -2224,7 +2229,7 @@
           ],
           correct: 1,
           threat: 0,
-          exp: "Oikein! Rehellinen, faktapohjainen raportointi on tietoturva-ammattilaisen velvollisuus. Johtoryhmä tarvitsee oikean tiedon päätöksentekoon – myös ikävät uutiset.",
+          exp: "Rehellinen, faktapohjainen raportointi on tietoturva-ammattilaisen velvollisuus. Johtoryhmä tarvitsee oikean tiedon päätöksentekoon – myös ikävät uutiset.",
         },
       ];
       let wdayIndex = 0,
@@ -2280,7 +2285,8 @@
         });
         const fb = document.getElementById("workday-feedback");
         fb.className = "feedback-box show" + (correct ? "" : " wrong");
-        fb.innerHTML = `<h3>${correct ? "Oikea päätös!" : "Vaarallinen päätös!"} ${correct ? "Uhkataso ei nouse." : "Uhkataso nousee +" + d.threat + "%!"}</h3><p>${d.exp}</p>`;
+        const threatMsg = correct ? "Uhkataso ei nouse." : (d.threat > 0 ? "Uhkataso nousee +" + d.threat + "%!" : "Varo vastaavia tilanteita!");
+        fb.innerHTML = `<h3>${correct ? "Oikea päätös!" : "Vaarallinen päätös!"} ${threatMsg}</h3><p>${correct ? "" : "Oikea toimintatapa: " + d.options[d.correct] + "<br><br>"}${d.exp}</p>`;
         document.getElementById("workday-next").classList.add("show");
       }
       function nextWorkday() {
