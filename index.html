@@ -53,21 +53,13 @@
             </div>
             <img src="otso-beige.png" class="game-card-bear" alt="" />
           </div>
-          <div class="game-card" onclick="startGame('phishing')">
-            <div class="game-card-body">
-              <h2>Peli 5 · Phishing-tunnistus</h2>
-              <p>Onko viesti aito vai huijaus? Tunnista petosviestit ennen kuin on liian myöhäistä.</p>
-              <div class="difficulty">6 kierrosta</div>
-              <div class="best-score" id="best-phishing">Ei tuloksia vielä</div>
-            </div>
-            <img src="otso-beige.png" class="game-card-bear" alt="" />
-          </div>
+  
         </div>
         <div
-          class="text-center text-xs tracking-widest uppercase pt-6 border-t border-[#334428]"
+          class="text-center text-x tracking-widest uppercase pt-6"
           style="color: var(--muted)"
         >
-          Be Brave. Be Secure.
+          Braveson - Trusted Partner in Cyber Security
         </div>
         <img src="logo-vaaka-väri-valk.svg" />
       </div>
@@ -79,6 +71,7 @@
         <div class="game-header">
           <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
           <span class="game-title">SALASANA-ANALYSOIJA</span>
+          <img src="logo-vaaka-väri-valk.svg" class="game-header-logo" alt="Braveson" />
         </div>
         <div class="tab-bar">
           <button
@@ -95,6 +88,7 @@
         <div id="password-board-tab" style="display: none">
           <div id="password-scoreboard"></div>
         </div>
+        <div class="game-footer"><img src="logo-vaaka-väri-valk.svg" alt="Braveson" /></div>
       </div>
 
       <!-- TRIVIA -->
@@ -103,6 +97,7 @@
           <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
           <span class="game-title">TIETOTURVATRIVIA</span>
           <span class="score-badge" id="trivia-score">0 / 10</span>
+          <img src="logo-vaaka-väri-valk.svg" class="game-header-logo" alt="Braveson" />
         </div>
         <div class="tab-bar">
           <button class="tab-btn active" onclick="switchTab('trivia', 'game')">
@@ -125,6 +120,7 @@
         <div id="trivia-board-tab" style="display: none">
           <div id="trivia-scoreboard"></div>
         </div>
+        <div class="game-footer"><img src="logo-vaaka-väri-valk.svg" alt="Braveson" /></div>
       </div>
 
       <!-- TRIVIA 2 -->
@@ -133,6 +129,7 @@
           <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
           <span class="game-title">TIETOTURVATRIVIA 2</span>
           <span class="score-badge" id="trivia2-score">0 / 10</span>
+          <img src="logo-vaaka-väri-valk.svg" class="game-header-logo" alt="Braveson" />
         </div>
         <div class="tab-bar">
           <button class="tab-btn active" onclick="switchTab('trivia2', 'game')">
@@ -155,6 +152,7 @@
         <div id="trivia2-board-tab" style="display: none">
           <div id="trivia2-scoreboard"></div>
         </div>
+        <div class="game-footer"><img src="logo-vaaka-väri-valk.svg" alt="Braveson" /></div>
       </div>
 
       <!-- WORKDAY -->
@@ -163,6 +161,7 @@
           <button class="back-btn" onclick="goMenu()">← VALIKKO</button>
           <span class="game-title">ASIANTUNTIJAN PÄIVÄ</span>
           <span class="score-badge" id="workday-score">Uhkataso: 0%</span>
+          <img src="logo-vaaka-väri-valk.svg" class="game-header-logo" alt="Braveson" />
         </div>
         <div class="tab-bar">
           <button class="tab-btn active" onclick="switchTab('workday', 'game')">
@@ -185,11 +184,13 @@
         <div id="workday-board-tab" style="display: none">
           <div id="workday-scoreboard"></div>
         </div>
+        <div class="game-footer"><img src="logo-vaaka-väri-valk.svg" alt="Braveson" /></div>
       </div>
 
       <!-- RESULT -->
       <div id="screen-result" class="screen">
         <div id="result-content"></div>
+        <div class="game-footer"><img src="logo-vaaka-väri-valk.svg" alt="Braveson" /></div>
       </div>
     </div>
     

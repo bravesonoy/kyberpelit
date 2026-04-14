@@ -216,6 +216,29 @@ body::before {
   --card-color: var(--purple);
 }
 
+/* ── GAME HEADER LOGO ── */
+.game-header-logo {
+  @apply h-64;
+  width: auto;
+  margin-left: 8px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* ── GAME FOOTER ── */
+.game-footer {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+.game-footer img {
+  @apply h-64;
+  width: auto;
+  opacity: 0.6;
+}
+
 /* ── GAME HEADER ── */
 .game-header {
   display: flex;
