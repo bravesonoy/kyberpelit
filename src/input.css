@@ -162,9 +162,20 @@ body::before {
 .game-card-body {
   flex: 1;
 }
+.game-card-bear {
+  height: 80px;
+  width: auto;
+  opacity: 0.18;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.game-card:hover .game-card-bear {
+  opacity: 0.32;
+}
 .game-card h2 {
   font-family: "Outfit", sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--card-color, var(--green));
@@ -177,7 +188,7 @@ body::before {
 }
 .game-card .difficulty {
   margin-top: 6px;
-  font-size: 0.75rem;
+  font-size: 1rem;
   letter-spacing: 1px;
   color: var(--muted);
   display: flex;
@@ -187,7 +198,7 @@ body::before {
 .game-card .best-score {
   margin-top: 8px;
   font-family: "Outfit", sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.9rem;
   color: var(--green);
   opacity: 0.9;
 }
@@ -220,10 +231,10 @@ body::before {
   border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--muted);
-  padding: 8px 16px;
+  padding: 10px 20px;
   cursor: pointer;
   font-family: "Outfit", sans-serif;
-  font-size: 0.68rem;
+  font-size: 1rem;
   letter-spacing: 2px;
   transition: all 0.2s;
 }
@@ -234,7 +245,7 @@ body::before {
 }
 .game-title {
   font-family: "Outfit", sans-serif;
-  font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
   font-weight: 700;
   color: var(--text);
   letter-spacing: 1px;
@@ -242,12 +253,12 @@ body::before {
 .score-badge {
   margin-left: auto;
   font-family: "Outfit", sans-serif;
-  font-size: 0.78rem;
+  font-size: 1rem;
   color: var(--green);
   background: var(--green-dim);
   border: 1px solid rgba(152, 195, 85, 0.3);
   border-radius: 4px;
-  padding: 6px 16px;
+  padding: 8px 18px;
 }
 
 /* ── PROGRESS ── */
@@ -278,13 +289,13 @@ body::before {
 }
 .tab-btn {
   flex: 1;
-  padding: 9px 12px;
+  padding: 12px 16px;
   background: transparent;
   border: none;
   border-radius: 4px;
   color: var(--muted);
   font-family: "Outfit", sans-serif;
-  font-size: 0.68rem;
+  font-size: 1rem;
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.2s;
@@ -407,15 +418,15 @@ body::before {
 
 /* ── SHARED GAME ELEMENTS ── */
 .choice-btn {
-  padding: 16px 18px;
+  padding: 20px 24px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
   color: var(--text-soft);
   cursor: pointer;
   font-family: "Outfit", sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 1.5px;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
@@ -455,7 +466,7 @@ body::before {
 }
 .feedback-box h3 {
   font-family: "Outfit", sans-serif;
-  font-size: 0.75rem;
+  font-size: 1.1rem;
   margin-bottom: 8px;
   color: var(--green);
   letter-spacing: 1px;
@@ -464,13 +475,13 @@ body::before {
   color: var(--red);
 }
 .feedback-box p {
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--text-soft);
   line-height: 1.7;
 }
 .clues-list {
   margin-top: 10px;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--text-soft);
 }
 .clues-list li {
@@ -487,13 +498,13 @@ body::before {
 
 .next-btn {
   width: 100%;
-  padding: 15px;
+  padding: 20px;
   background: var(--green);
   border: none;
   border-radius: 6px;
   color: #1a1a1a;
   font-family: "Outfit", sans-serif;
-  font-size: 0.78rem;
+  font-size: 1.1rem;
   letter-spacing: 3px;
   font-weight: 800;
   cursor: pointer;
@@ -526,7 +537,7 @@ body::before {
   border-bottom: 1px solid var(--border);
 }
 .email-field {
-  font-size: 0.78rem;
+  font-size: 1rem;
   color: var(--muted);
   margin-bottom: 4px;
 }
@@ -535,14 +546,14 @@ body::before {
   font-weight: 500;
 }
 .email-subject {
-  font-size: 0.98rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--text);
   margin-top: 10px;
 }
 .email-body {
   padding: 20px;
-  font-size: 0.87rem;
+  font-size: 1rem;
   line-height: 1.85;
   color: var(--text-soft);
   white-space: pre-line;
@@ -611,14 +622,14 @@ body::before {
 }
 .pw-metric .metric-label {
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   display: block;
 }
 .pw-metric .metric-value {
   color: var(--text);
   font-weight: 600;
   font-family: "Outfit", sans-serif;
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 .pw-metric.ok {
   border-color: rgba(152, 195, 85, 0.5);
@@ -689,14 +700,14 @@ body::before {
 }
 .trivia-question .q-number {
   font-family: "Outfit", sans-serif;
-  font-size: 0.68rem;
+  font-size: 1rem;
   color: var(--green);
   letter-spacing: 3px;
   margin-bottom: 12px;
   text-transform: uppercase;
 }
 .trivia-question h3 {
-  font-size: 1.02rem;
+  font-size: 1.25rem;
   font-weight: 500;
   line-height: 1.6;
   color: var(--text);
@@ -707,13 +718,13 @@ body::before {
   margin-bottom: 20px;
 }
 .trivia-opt {
-  padding: 14px 18px;
+  padding: 18px 22px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-soft);
   cursor: pointer;
-  font-size: 0.87rem;
+  font-size: 1.05rem;
   text-align: left;
   transition: all 0.2s;
   display: flex;
@@ -761,7 +772,7 @@ body::before {
 }
 .wday-scenario .scenario-type {
   font-family: "Outfit", sans-serif;
-  font-size: 0.65rem;
+  font-size: 1rem;
   letter-spacing: 3px;
   color: var(--purple);
   margin-bottom: 12px;
@@ -771,14 +782,14 @@ body::before {
   text-transform: uppercase;
 }
 .wday-scenario h3 {
-  font-size: 1rem;
+  font-size: 1.25rem;
   line-height: 1.55;
   color: var(--text);
   margin-bottom: 8px;
   font-weight: 600;
 }
 .wday-scenario .details {
-  font-size: 0.84rem;
+  font-size: 1.05rem;
   color: var(--text-soft);
   line-height: 1.7;
 }
@@ -788,13 +799,13 @@ body::before {
   margin-bottom: 20px;
 }
 .wday-opt {
-  padding: 14px 18px;
+  padding: 18px 22px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-soft);
   cursor: pointer;
-  font-size: 0.86rem;
+  font-size: 1.05rem;
   text-align: left;
   transition: all 0.2s;
   display: flex;
@@ -835,7 +846,7 @@ body::before {
 }
 .wday-threat-label {
   font-family: "Outfit", sans-serif;
-  font-size: 0.67rem;
+  font-size: 1rem;
   color: var(--muted);
   letter-spacing: 2px;
   margin-bottom: 8px;
